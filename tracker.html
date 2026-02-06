@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMG Portal</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="active"><img src="logo.PNG" alt="APEC" class="logo-img"></a>
+    </div>
+
+    <nav class="nav-links">
+      <a href="index.html">HOME</a>
+      <a href="glinks.html">G.LINKS</a>
+      <a href="downloadables.html">DOWNLOADABLES</a>
+      <a href="tracker.html" class="active">ISSUE TRACKER</a>
+      <a href="projstat.html">PROJECT STATUS</a>
+    </nav>
+
+    <div class="status">APEC HOMES</div>
+  </header>
+
+
+  <main class="content">
+    <div class="tracker-container">
+      <div class="tracker-header">
+        <h1 class="page-title">Issue Tracker</h1>
+        <div class="filter-bar">
+          <select class="filter-select">
+            <option>All Issues</option>
+            <option>Open</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+        </div>
+      </div>
+
+      <table class="issues-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Assigned To</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="issue-id">#001</td>
+            <td class="issue-title">Login page not responsive</td>
+            <td><span class="status-badge open">Open</span></td>
+            <td><span class="priority high">High</span></td>
+            <td>John Doe</td>
+            <td>Jan 15, 2026</td>
+          </tr>
+          <tr>
+            <td class="issue-id">#002</td>
+            <td class="issue-title">Database connection timeout</td>
+            <td><span class="status-badge in-progress">In Progress</span></td>
+            <td><span class="priority high">High</span></td>
+            <td>Jane Smith</td>
+            <td>Jan 18, 2026</td>
+          </tr>
+          <tr>
+            <td class="issue-id">#003</td>
+            <td class="issue-title">UI spacing inconsistency</td>
+            <td><span class="status-badge open">Open</span></td>
+            <td><span class="priority medium">Medium</span></td>
+            <td>Unassigned</td>
+            <td>Jan 20, 2026</td>
+          </tr>
+          <tr>
+            <td class="issue-id">#004</td>
+            <td class="issue-title">API performance optimization</td>
+            <td><span class="status-badge resolved">Resolved</span></td>
+            <td><span class="priority medium">Medium</span></td>
+            <td>Mike Johnson</td>
+            <td>Jan 22, 2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>
