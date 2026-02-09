@@ -54,7 +54,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 40px;
+  margin-left: 140px;
   margin-right: -150px;
 }
 
@@ -585,3 +585,4 @@ body {
   }
 
 }
+
