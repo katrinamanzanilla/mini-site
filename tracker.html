@@ -27,68 +27,173 @@
   </header>
 
 
-  <main class="content">
-    <div class="tracker-container">
-      <div class="tracker-header">
+  <main class="content tracker-page">
+    <div class="tracker-shell">
+      <section class="tracker-top">
         <h1 class="page-title">Issue Tracker</h1>
-        <div class="filter-bar">
-          <select class="filter-select">
-            <option>All Issues</option>
-            <option>Open</option>
-            <option>In Progress</option>
-            <option>Resolved</option>
-          </select>
-        </div>
-      </div>
+        <p class="tracker-intro">Track, assign, and resolve team issues using a Google Sheet-friendly workflow. Add an issue below, copy it as one row, and paste directly into your tracker sheet.</p>
+      </section>
 
-      <table class="issues-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Assigned To</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="issue-id">#001</td>
-            <td class="issue-title">Login page not responsive</td>
-            <td><span class="status-badge open">Open</span></td>
-            <td><span class="priority high">High</span></td>
-            <td>John Doe</td>
-            <td>Jan 15, 2026</td>
-          </tr>
-          <tr>
-            <td class="issue-id">#002</td>
-            <td class="issue-title">Database connection timeout</td>
-            <td><span class="status-badge in-progress">In Progress</span></td>
-            <td><span class="priority high">High</span></td>
-            <td>Jane Smith</td>
-            <td>Jan 18, 2026</td>
-          </tr>
-          <tr>
-            <td class="issue-id">#003</td>
-            <td class="issue-title">UI spacing inconsistency</td>
-            <td><span class="status-badge open">Open</span></td>
-            <td><span class="priority medium">Medium</span></td>
-            <td>Unassigned</td>
-            <td>Jan 20, 2026</td>
-          </tr>
-          <tr>
-            <td class="issue-id">#004</td>
-            <td class="issue-title">API performance optimization</td>
-            <td><span class="status-badge resolved">Resolved</span></td>
-            <td><span class="priority medium">Medium</span></td>
-            <td>Mike Johnson</td>
-            <td>Jan 22, 2026</td>
-          </tr>
-        </tbody>
-      </table>
+      <section class="tracker-metrics" aria-label="Issue summary">
+        <article class="metric-card">
+          <span class="metric-label">Open</span>
+          <strong class="metric-value">08</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">In Progress</span>
+          <strong class="metric-value">05</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Resolved (30d)</span>
+          <strong class="metric-value">14</strong>
+        </article>
+      </section>
+
+      <section class="tracker-workspace" aria-label="Issue tracker workspace">
+        <article class="tracker-panel intake-panel">
+          <h2 class="tracker-panel-title">New Issue Intake</h2>
+          <p class="panel-text">Use this layout for consistent issue records in Google Sheets.</p>
+          <form id="issue-form" class="issue-form">
+            <label>
+              Title
+              <input type="text" id="issue-title" placeholder="Ex: Login page not responsive" required>
+            </label>
+            <label>
+              Description
+              <textarea id="issue-description" rows="3" placeholder="Describe the problem clearly"></textarea>
+            </label>
+            <div class="form-grid">
+              <label>
+                Status
+                <select id="issue-status">
+                  <option>Open</option>
+                  <option>In Progress</option>
+                  <option>Resolved</option>
+                </select>
+              </label>
+              <label>
+                Priority
+                <select id="issue-priority">
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-grid">
+              <label>
+                Assignee
+                <input type="text" id="issue-assignee" placeholder="Ex: John Doe">
+              </label>
+              <label>
+                Due Date
+                <input type="date" id="issue-date">
+              </label>
+            </div>
+            <div class="tracker-actions">
+              <button type="submit" class="tracker-btn primary">Copy row for Google Sheets</button>
+              <a class="tracker-btn ghost" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener noreferrer">Open Google Sheets</a>
+            </div>
+            <p class="copy-feedback" id="copy-feedback" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="tracker-panel register-panel">
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Suggested Sheet Layout</h2>
+            <span class="layout-note">Tab name: <strong>Issue Register</strong></span>
+          </div>
+          <div class="sheet-preview-wrap">
+            <table class="issues-table">
+              <thead>
+                <tr>
+                  <th>Issue ID</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Assigned To</th>
+                  <th>Reported On</th>
+                  <th>Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="issue-id">#001</td>
+                  <td class="issue-title">Login page not responsive</td>
+                  <td>Buttons overlap on mobile viewports</td>
+                  <td><span class="status-badge open">Open</span></td>
+                  <td><span class="priority high">High</span></td>
+                  <td>John Doe</td>
+                  <td>Jan 15, 2026</td>
+                  <td>Jan 20, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-id">#002</td>
+                  <td class="issue-title">Database connection timeout</td>
+                  <td>Intermittent timeout from analytics API</td>
+                  <td><span class="status-badge in-progress">In Progress</span></td>
+                  <td><span class="priority high">High</span></td>
+                  <td>Jane Smith</td>
+                  <td>Jan 18, 2026</td>
+                  <td>Jan 23, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-id">#003</td>
+                  <td class="issue-title">UI spacing inconsistency</td>
+                  <td>Card paddings differ between pages</td>
+                  <td><span class="status-badge open">Open</span></td>
+                  <td><span class="priority medium">Medium</span></td>
+                  <td>Unassigned</td>
+                  <td>Jan 20, 2026</td>
+                  <td>Jan 27, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-id">#004</td>
+                  <td class="issue-title">API performance optimization</td>
+                  <td>Optimize endpoint response time under load</td>
+                  <td><span class="status-badge resolved">Resolved</span></td>
+                  <td><span class="priority medium">Medium</span></td>
+                  <td>Mike Johnson</td>
+                  <td>Jan 22, 2026</td>
+                  <td>Jan 24, 2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
     </div>
   </main>
+
+  <script>
+    const issueForm = document.getElementById('issue-form');
+    const copyFeedback = document.getElementById('copy-feedback');
+
+    issueForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const rowValues = [
+        'AUTO-ID',
+        document.getElementById('issue-title').value.trim() || '-',
+        document.getElementById('issue-description').value.trim() || '-',
+        document.getElementById('issue-status').value,
+        document.getElementById('issue-priority').value,
+        document.getElementById('issue-assignee').value.trim() || 'Unassigned',
+        new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        document.getElementById('issue-date').value || '-'
+      ];
+
+      const tsvRow = rowValues.join('\t');
+
+      try {
+        await navigator.clipboard.writeText(tsvRow);
+        copyFeedback.textContent = 'Copied. Paste directly into the next empty row in your Google Sheet.';
+      } catch (error) {
+        copyFeedback.textContent = 'Could not copy automatically. Select and copy this row: ' + tsvRow;
+      }
+    });
+  </script>
 
 </body>
 </html>
