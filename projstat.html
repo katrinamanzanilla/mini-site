@@ -27,87 +27,124 @@
   </header>
 
 
-  <main class="content">
-    <div class="status-container">
-      <h1 class="page-title">Project Status Overview</h1>
-
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="card-header">
-            <h2 class="project-name">Project Alpha</h2>
-            <span class="status-indicator on-track">On Track</span>
-          </div>
-          <div class="card-body">
-            <div class="metric">
-              <span class="label">Progress</span>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 75%"></div>
-              </div>
-              <span class="value">75%</span>
-            </div>
-            <div class="metric">
-              <span class="label">Timeline</span>
-              <span class="value">Q1 2026</span>
-            </div>
-            <div class="metric">
-              <span class="label">Lead</span>
-              <span class="value">Team A</span>
-            </div>
-          </div>
+  <main class="content status-page">
+    <div class="status-shell">
+      <section class="status-top">
+        <h1 class="page-title">Project Status Overview</h1>
+        <p class="status-intro">A central snapshot of project health, milestones, and blockers. Sync updates weekly and maintain one source of truth using Google Sheets and Google Looker Studio.</p>
+        <div class="status-actions">
+          <a class="tracker-btn primary" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener noreferrer">Open Master Status Sheet</a>
+          <a class="tracker-btn ghost" href="https://lookerstudio.google.com" target="_blank" rel="noopener noreferrer">Open Looker Studio Dashboard</a>
         </div>
+      </section>
 
-        <div class="project-card">
-          <div class="card-header">
-            <h2 class="project-name">Project Beta</h2>
-            <span class="status-indicator at-risk">At Risk</span>
-          </div>
-          <div class="card-body">
-            <div class="metric">
-              <span class="label">Progress</span>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 45%"></div>
-              </div>
-              <span class="value">45%</span>
-            </div>
-            <div class="metric">
-              <span class="label">Timeline</span>
-              <span class="value">Q2 2026</span>
-            </div>
-            <div class="metric">
-              <span class="label">Lead</span>
-              <span class="value">Team B</span>
-            </div>
-          </div>
-        </div>
+      <section class="status-kpis" aria-label="Portfolio KPI overview">
+        <article class="metric-card">
+          <span class="metric-label">Active Projects</span>
+          <strong class="metric-value">12</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">On Track</span>
+          <strong class="metric-value">08</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">At Risk</span>
+          <strong class="metric-value">03</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Delayed</span>
+          <strong class="metric-value">01</strong>
+        </article>
+      </section>
 
-        <div class="project-card">
-          <div class="card-header">
-            <h2 class="project-name">Project Gamma</h2>
-            <span class="status-indicator completed">Completed</span>
+      <section class="status-grid" aria-label="Project status details">
+        <article class="status-panel full-width">
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Portfolio Status Register</h2>
+            <span class="layout-note">Source: <strong>Google Sheet / Portfolio Status</strong></span>
           </div>
-          <div class="card-body">
-            <div class="metric">
-              <span class="label">Progress</span>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 100%"></div>
-              </div>
-              <span class="value">100%</span>
-            </div>
-            <div class="metric">
-              <span class="label">Timeline</span>
-              <span class="value">Completed Jan 2026</span>
-            </div>
-            <div class="metric">
-              <span class="label">Lead</span>
-              <span class="value">Team C</span>
-            </div>
+          <div class="sheet-preview-wrap">
+            <table class="issues-table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Owner</th>
+                  <th>Phase</th>
+                  <th>Progress</th>
+                  <th>RAG</th>
+                  <th>Next Milestone</th>
+                  <th>Target Date</th>
+                  <th>Last Update</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="issue-title">Township Expansion - North</td>
+                  <td>PMO Team A</td>
+                  <td>Execution</td>
+                  <td>72%</td>
+                  <td><span class="status-indicator on-track">On Track</span></td>
+                  <td>Site utility handover</td>
+                  <td>Feb 20, 2026</td>
+                  <td>Feb 08, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-title">Digital Sales Portal</td>
+                  <td>PMO Team B</td>
+                  <td>UAT</td>
+                  <td>58%</td>
+                  <td><span class="status-indicator at-risk">At Risk</span></td>
+                  <td>UAT signoff</td>
+                  <td>Mar 03, 2026</td>
+                  <td>Feb 09, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-title">CRM Data Cleansing</td>
+                  <td>PMO Team C</td>
+                  <td>Planning</td>
+                  <td>32%</td>
+                  <td><span class="status-indicator delayed">Delayed</span></td>
+                  <td>Baseline approval</td>
+                  <td>Feb 27, 2026</td>
+                  <td>Feb 07, 2026</td>
+                </tr>
+                <tr>
+                  <td class="issue-title">Client Self-Service Enhancements</td>
+                  <td>PMO Team D</td>
+                  <td>Deployment</td>
+                  <td>94%</td>
+                  <td><span class="status-indicator completed">Completed</span></td>
+                  <td>Post-launch report</td>
+                  <td>Feb 14, 2026</td>
+                  <td>Feb 10, 2026</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
-      </div>
+        </article>
+
+        <article class="status-panel">
+          <h2 class="tracker-panel-title">Weekly Update Format</h2>
+          <ul class="status-list">
+            <li>Progress % updated every Friday</li>
+            <li>RAG based on scope, schedule, and resource risk</li>
+            <li>One next milestone and one key blocker per project</li>
+            <li>Last update date required for every row</li>
+          </ul>
+        </article>
+
+        <article class="status-panel">
+          <h2 class="tracker-panel-title">Google Integration Notes</h2>
+          <ul class="status-list">
+            <li>Use one shared Google Sheet as the master status register</li>
+            <li>Create a dashboard in Looker Studio from that same Sheet</li>
+            <li>Publish dashboard link to G.Links for leadership visibility</li>
+            <li>Lock formula columns and allow update cells only</li>
+          </ul>
+        </article>
+      </section>
     </div>
   </main>
 
 </body>
 </html>
-
-
