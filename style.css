@@ -135,11 +135,30 @@ body {
   margin: 0 auto;
 }
 
+.downloadables-container {
+  max-width: 980px;
+}
+
 .page-title {
   font-size: 44px;
   font-weight: 600;
   margin-bottom: 60px;
   font-family: 'Playfair Display', serif;
+}
+
+.downloadables-intro {
+  max-width: 560px;
+  margin: -34px 0 28px;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.62;
+}
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
 }
 
 .links-section {
@@ -233,6 +252,61 @@ body {
 
 .download-item:hover a::after {
   opacity: 1;
+}
+
+
+
+.download-card {
+  margin: 0;
+  padding: 22px 20px;
+  border: 1px solid #e8e3dd;
+  background-color: #fbfaf8;
+  border-radius: 10px;
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.download-card .section-title {
+  margin-bottom: 0;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+.drive-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 14px;
+  border: 1px solid #111;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #111;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.drive-button:hover {
+  background-color: #111;
+  color: #fdfcfb;
+}
+
+@media (max-width: 980px) {
+  .download-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .downloadables-intro {
+    margin-top: -24px;
+  }
 }
 
 .status-container {
@@ -585,5 +659,3 @@ body {
   }
 
 }
-
-
