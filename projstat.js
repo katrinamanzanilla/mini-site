@@ -1,88 +1,35 @@
-const DEFAULT_SOURCE = {
-  mode: "sheet",
-  appsScriptUrl: "",
-  sheetId: "1BHTM5Jx7xAyaRnzuyjD38-Iz5mlQddkA8s2J2ZatIXI",
-  sheetTab: "Portfolio Status",
-  gid: ""
-};
+const LOCAL_SOURCE_KEY = "projectStatusOverviewSource";
 
-const LOCAL_SOURCE_KEY = "projectStatusSheetSource";
-
-const fallbackIssues = [
+const fallbackProjects = [
   {
-    issueId: "PRJ-1001",
     project: "Township Expansion - North",
     owner: "PMO Team A",
-    priority: "High",
-    status: "On Track",
-    blocker: "Waiting for utility permit",
-    dueDate: "Feb 20, 2026",
+    phase: "Execution",
+    progress: "68%",
+    rag: "On Track",
+    milestone: "Utility permit released",
+    targetDate: "Feb 20, 2026",
     lastUpdate: "Feb 08, 2026"
   },
   {
-    issueId: "PRJ-1027",
     project: "Digital Sales Portal",
     owner: "PMO Team B",
-    priority: "Critical",
-    status: "At Risk",
-    blocker: "UAT defect backlog",
-    dueDate: "Mar 03, 2026",
+    phase: "UAT",
+    progress: "74%",
+    rag: "At Risk",
+    milestone: "UAT sign-off",
+    targetDate: "Mar 03, 2026",
     lastUpdate: "Feb 09, 2026"
-  },
-  {
-    issueId: "PRJ-1064",
-    project: "CRM Data Cleansing",
-    owner: "PMO Team C",
-    priority: "Medium",
-    status: "Delayed",
-    blocker: "Data quality validation pending",
-    dueDate: "Feb 27, 2026",
-    lastUpdate: "Feb 07, 2026"
-  },
-  {
-    issueId: "PRJ-1088",
-    project: "Client Self-Service Enhancements",
-    owner: "PMO Team D",
-    priority: "Low",
-    status: "Completed",
-    blocker: "None",
-    dueDate: "Feb 14, 2026",
-    lastUpdate: "Feb 10, 2026"
   }
 ];
-
-function toClassName(status) {
-  return String(status)
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function formatMetricCount(count) {
-  return String(count).padStart(2, "0");
-}
 
 function sanitize(value, fallback = "—") {
   const text = String(value ?? "").trim();
   return text || fallback;
 }
 
-function sanitizeOptional(value) {
-  return String(value ?? "").trim();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function normalizeHeader(header) {
-  return String(header ?? "")
+function normalizeHeader(value) {
+  return String(value ?? "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, " ");
@@ -91,24 +38,24 @@ function normalizeHeader(header) {
 function parseGvizResponse(text) {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
-
   if (start === -1 || end === -1 || end <= start) {
-    throw new Error("Invalid Google Visualization response body");
+    throw new Error("Invalid Google Sheet response.");
   }
 
   return JSON.parse(text.slice(start, end + 1));
 }
 
-function gvizToRows(gvizPayload) {
-  const columns = (gvizPayload.table?.cols ?? []).map((column) => normalizeHeader(column.label));
-  const rawRows = gvizPayload.table?.rows ?? [];
+function gvizToRows(payload) {
+  const columns = (payload.table?.cols ?? []).map((column, index) => {
+    const label = normalizeHeader(column.label);
+    return label || `column ${index + 1}`;
+  });
 
-  return rawRows.map((row) => {
-    const cells = row.c ?? [];
+  return (payload.table?.rows ?? []).map((row) => {
     const mapped = {};
 
     columns.forEach((columnName, index) => {
-      const cell = cells[index];
+      const cell = row.c?.[index];
       mapped[columnName] = cell?.f ?? cell?.v ?? "";
     });
 
@@ -116,248 +63,225 @@ function gvizToRows(gvizPayload) {
   });
 }
 
-function normalizeIssue(raw) {
+function pickField(row, keys) {
+  for (const key of keys) {
+    const value = String(row[key] ?? "").trim();
+    if (value) {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function normalizeProject(row) {
   return {
-    issueId: sanitize(raw["issue id"] ?? raw.issueid ?? raw.id),
-    project: sanitize(raw.project),
-    owner: sanitize(raw.owner),
-    priority: sanitize(raw.priority),
-    status: sanitize(raw.status ?? raw.rag),
-    blocker: sanitize(raw.blocker ?? raw["key blocker"]),
-    dueDate: sanitize(raw["due date"] ?? raw["target date"]),
-    lastUpdate: sanitize(raw["last update"])
+    project: sanitize(pickField(row, ["project", "project name", "column 1"])),
+    owner: sanitize(pickField(row, ["owner", "lead", "column 2"])),
+    phase: sanitize(pickField(row, ["phase", "stage", "column 3"])),
+    progress: sanitize(pickField(row, ["progress", "progress %", "column 4"])),
+    rag: sanitize(pickField(row, ["rag", "status", "column 5"])),
+    milestone: sanitize(pickField(row, ["next milestone", "milestone", "column 6"])),
+    targetDate: sanitize(pickField(row, ["target date", "due date", "column 7"])),
+    lastUpdate: sanitize(pickField(row, ["last update", "updated", "column 8"]))
   };
 }
 
-function getKpis(issues) {
-  const activeProjects = issues.length;
-  const onTrack = issues.filter((issue) => issue.status.toLowerCase() === "on track").length;
-  const atRisk = issues.filter((issue) => issue.status.toLowerCase() === "at risk").length;
-  const delayed = issues.filter((issue) => issue.status.toLowerCase() === "delayed").length;
-
-  return { activeProjects, onTrack, atRisk, delayed };
+function isGoogleUrl(url) {
+  return [
+    "docs.google.com",
+    "drive.google.com",
+    "script.google.com",
+    "forms.google.com",
+    "lookerstudio.google.com"
+  ].some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`));
 }
 
-function renderKpis({ activeProjects, onTrack, atRisk, delayed }) {
-  document.getElementById("kpi-active-projects").textContent = formatMetricCount(activeProjects);
-  document.getElementById("kpi-on-track").textContent = formatMetricCount(onTrack);
-  document.getElementById("kpi-at-risk").textContent = formatMetricCount(atRisk);
-  document.getElementById("kpi-delayed").textContent = formatMetricCount(delayed);
-}
+function parseGoogleLink(rawValue) {
+  const url = new URL(rawValue);
 
-function renderTable(issues) {
-  const tableBody = document.getElementById("status-table-body");
-
-  tableBody.innerHTML = issues
-    .map((issue) => {
-      const statusClass = toClassName(issue.status);
-
-      return `
-        <tr>
-          <td class="issue-title">${escapeHtml(issue.issueId)}</td>
-          <td>${escapeHtml(issue.project)}</td>
-          <td>${escapeHtml(issue.owner)}</td>
-          <td>${escapeHtml(issue.priority)}</td>
-          <td><span class="status-indicator ${escapeHtml(statusClass)}">${escapeHtml(issue.status)}</span></td>
-          <td>${escapeHtml(issue.blocker)}</td>
-          <td>${escapeHtml(issue.dueDate)}</td>
-          <td>${escapeHtml(issue.lastUpdate)}</td>
-        </tr>
-      `;
-    })
-    .join("");
-}
-
-function buildSheetViewLink(source) {
-  if (!source.sheetId) {
-    return "";
+  if (!isGoogleUrl(url)) {
+    throw new Error("Please enter a valid Google link (Sheets, Docs, Drive, Forms, or Apps Script).");
   }
 
-  return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(source.sheetId)}/edit`;
+  return url;
 }
 
-function buildStatusApi(source) {
-  if (!source.sheetId) {
-    throw new Error("Google Sheet ID is missing.");
+function getHashParams(url) {
+  return new URLSearchParams(String(url.hash ?? "").replace(/^#/, ""));
+}
+
+function getSheetSource(url) {
+  const idMatch = url.pathname.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!idMatch?.[1]) {
+    return null;
   }
 
-  const params = new URLSearchParams({ tqx: "out:json" });
+  const hashParams = getHashParams(url);
+  return {
+    sheetId: idMatch[1],
+    gid: String(url.searchParams.get("gid") || hashParams.get("gid") || "").trim(),
+    sheet: String(url.searchParams.get("sheet") || hashParams.get("sheet") || "").trim()
+  };
+}
+
+function buildViewerUrl(url) {
+  if (url.hostname.includes("docs.google.com") && url.pathname.includes("/spreadsheets/d/")) {
+    const source = getSheetSource(url);
+    if (!source) return url.toString();
+
+    const gidPart = source.gid ? `#gid=${encodeURIComponent(source.gid)}` : "";
+    return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(source.sheetId)}/preview${gidPart}`;
+  }
+
+  if (url.hostname.includes("drive.google.com")) {
+    const match = url.pathname.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+    if (match?.[1]) {
+      return `https://drive.google.com/file/d/${encodeURIComponent(match[1])}/preview`;
+    }
+  }
+
+  return url.toString();
+}
+
+function buildSheetApiUrl(source) {
+  const params = new URLSearchParams({ tqx: "out:json", headers: "1" });
   if (source.gid) {
     params.set("gid", source.gid);
-  } else if (source.sheetTab) {
-    params.set("sheet", source.sheetTab);
+  } else if (source.sheet) {
+    params.set("sheet", source.sheet);
   }
 
   return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(source.sheetId)}/gviz/tq?${params.toString()}`;
 }
 
-function isAppsScriptUrl(url) {
-  return url.hostname === "script.google.com" || url.hostname.endsWith(".script.google.com");
-}
-
-function parseSourceUrl(rawUrl) {
-  const url = new URL(rawUrl);
-
-  if (isAppsScriptUrl(url)) {
-    return {
-      mode: "appsScript",
-      appsScriptUrl: url.toString(),
-      sheetId: "",
-      sheetTab: "",
-      gid: ""
-    };
-  }
-
-  const idMatch = url.pathname.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-
-  if (!idMatch?.[1]) {
-    throw new Error("Provide a valid Google Apps Script Web App URL or Google Sheets URL.");
-  }
-
+function getKpis(projects) {
   return {
-    mode: "sheet",
-    appsScriptUrl: "",
-    sheetId: idMatch[1],
-    sheetTab: sanitizeOptional(url.searchParams.get("sheet")),
-    gid: sanitizeOptional(url.searchParams.get("gid"))
+    active: projects.length,
+    onTrack: projects.filter((project) => project.rag.toLowerCase() === "on track").length,
+    atRisk: projects.filter((project) => project.rag.toLowerCase() === "at risk").length,
+    delayed: projects.filter((project) => project.rag.toLowerCase() === "delayed").length
   };
 }
 
-function readSavedSource() {
-  try {
-    const raw = localStorage.getItem(LOCAL_SOURCE_KEY);
-    if (!raw) {
-      return { ...DEFAULT_SOURCE };
-    }
-
-    const parsed = JSON.parse(raw);
-    return {
-      mode: parsed.mode === "appsScript" ? "appsScript" : "sheet",
-      appsScriptUrl: sanitizeOptional(parsed.appsScriptUrl),
-      sheetId: sanitizeOptional(parsed.sheetId),
-      sheetTab: sanitizeOptional(parsed.sheetTab),
-      gid: sanitizeOptional(parsed.gid)
-    };
-  } catch {
-    return { ...DEFAULT_SOURCE };
-  }
+function renderKpis(kpis) {
+  document.getElementById("kpi-active-projects").textContent = String(kpis.active).padStart(2, "0");
+  document.getElementById("kpi-on-track").textContent = String(kpis.onTrack).padStart(2, "0");
+  document.getElementById("kpi-at-risk").textContent = String(kpis.atRisk).padStart(2, "0");
+  document.getElementById("kpi-delayed").textContent = String(kpis.delayed).padStart(2, "0");
 }
 
-function saveSource(source) {
-  localStorage.setItem(LOCAL_SOURCE_KEY, JSON.stringify(source));
+function renderProjects(projects) {
+  const body = document.getElementById("status-table-body");
+  body.innerHTML = projects.map((project) => `
+    <tr>
+      <td>${sanitize(project.project)}</td>
+      <td>${sanitize(project.owner)}</td>
+      <td>${sanitize(project.phase)}</td>
+      <td>${sanitize(project.progress)}</td>
+      <td>${sanitize(project.rag)}</td>
+      <td>${sanitize(project.milestone)}</td>
+      <td>${sanitize(project.targetDate)}</td>
+      <td>${sanitize(project.lastUpdate)}</td>
+    </tr>
+  `).join("");
 }
 
 function setFeedback(message) {
   document.getElementById("sheet-source-feedback").textContent = message;
 }
 
-function updateSourceUi(source) {
-  const input = document.getElementById("sheet-source-input");
-  const label = document.getElementById("status-source-label");
+function setViewer(urlString) {
+  const viewer = document.getElementById("google-viewer");
+  const viewerWrap = document.getElementById("google-viewer-wrap");
+  viewer.src = urlString;
+  viewerWrap.hidden = false;
+}
 
-  if (source.mode === "appsScript" && source.appsScriptUrl) {
-    input.value = source.appsScriptUrl;
-    label.innerHTML = "Source: <strong>Google Apps Script Web App</strong>";
+function clearViewer() {
+  const viewer = document.getElementById("google-viewer");
+  const viewerWrap = document.getElementById("google-viewer-wrap");
+  viewer.src = "about:blank";
+  viewerWrap.hidden = true;
+}
+
+async function loadProjectsFromSheet(url) {
+  const source = getSheetSource(url);
+  if (!source) {
+    renderKpis(getKpis(fallbackProjects));
+    renderProjects(fallbackProjects);
+    setFeedback("Google link opened. For full project table auto-load, use a Google Sheets link.");
     return;
   }
 
-  input.value = buildSheetViewLink(source) || "";
-  label.innerHTML = "Source: <strong>Google Sheets (gviz)</strong>";
-}
-
-async function loadFromAppsScript(source) {
-  if (!source.appsScriptUrl) {
-    throw new Error("Apps Script URL is missing.");
-  }
-
-  const response = await fetch(source.appsScriptUrl, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Apps Script API returned ${response.status}`);
-  }
-
-  const payload = await response.json();
-  const rows = Array.isArray(payload) ? payload : payload.rows;
-
-  if (!Array.isArray(rows)) {
-    throw new Error("Apps Script response must be an array or { rows: [] } JSON payload.");
-  }
-
-  const issues = rows.map(normalizeIssue).filter((issue) => issue.project !== "—");
-
-  if (!issues.length) {
-    throw new Error("No issue tracking rows found from Apps Script response.");
-  }
-
-  return issues;
-}
-
-async function loadFromSheet(source) {
-  const response = await fetch(buildStatusApi(source), { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Status API returned ${response.status}`);
-  }
-
-  const text = await response.text();
-  const gvizPayload = parseGvizResponse(text);
-  const rows = gvizToRows(gvizPayload);
-  const issues = rows.map(normalizeIssue).filter((issue) => issue.project !== "—");
-
-  if (!issues.length) {
-    throw new Error("No issue tracking rows found from Google Sheet.");
-  }
-
-  return issues;
-}
-
-async function loadProjectStatus(source) {
   try {
-    const issues = source.mode === "appsScript"
-      ? await loadFromAppsScript(source)
-      : await loadFromSheet(source);
+    const response = await fetch(buildSheetApiUrl(source), { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Google Sheet API returned ${response.status}`);
+    }
 
-    renderKpis(getKpis(issues));
-    renderTable(issues);
-  } catch (error) {
-    console.warn("Unable to load live project status. Showing fallback data.", error);
-    setFeedback("Could not read your live source yet. Showing built-in issue tracking rows.");
-    renderKpis(getKpis(fallbackIssues));
-    renderTable(fallbackIssues);
+    const payload = parseGvizResponse(await response.text());
+    const projects = gvizToRows(payload)
+      .map(normalizeProject)
+      .filter((project) => project.project !== "—");
+
+    if (!projects.length) {
+      throw new Error("No rows found.");
+    }
+
+    renderKpis(getKpis(projects));
+    renderProjects(projects);
+    setFeedback("Project status loaded successfully.");
+  } catch {
+    renderKpis(getKpis(fallbackProjects));
+    renderProjects(fallbackProjects);
+    setFeedback("Could not read sheet rows. Make sure the sheet is shared to Anyone with the link (Viewer).");
   }
 }
 
-function initSourceControls(source) {
-  const form = document.getElementById("sheet-source-form");
-  const resetButton = document.getElementById("sheet-source-reset");
+async function handleSubmit(event) {
+  event.preventDefault();
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  const input = document.getElementById("sheet-source-input");
 
-    try {
-      const inputValue = document.getElementById("sheet-source-input").value.trim();
-      const parsedSource = parseSourceUrl(inputValue);
-      saveSource(parsedSource);
-      updateSourceUi(parsedSource);
-      setFeedback(
-        parsedSource.mode === "appsScript"
-          ? "Apps Script source saved. Loading issue tracking table..."
-          : "Sheet source saved. Loading issue tracking table..."
-      );
-      await loadProjectStatus(parsedSource);
-    } catch (error) {
-      setFeedback(error.message || "Please provide a valid Google URL.");
-    }
-  });
-
-  resetButton.addEventListener("click", async () => {
-    saveSource(DEFAULT_SOURCE);
-    updateSourceUi(DEFAULT_SOURCE);
-    setFeedback("Reset to default sheet source.");
-    await loadProjectStatus(DEFAULT_SOURCE);
-  });
-
-  updateSourceUi(source);
+  try {
+    const url = parseGoogleLink(input.value.trim());
+    localStorage.setItem(LOCAL_SOURCE_KEY, url.toString());
+    setViewer(buildViewerUrl(url));
+    await loadProjectsFromSheet(url);
+  } catch (error) {
+    setFeedback(error.message || "Please enter a valid Google link.");
+  }
 }
 
-const activeSource = readSavedSource();
-initSourceControls(activeSource);
-loadProjectStatus(activeSource);
+function resetView() {
+  localStorage.removeItem(LOCAL_SOURCE_KEY);
+  clearViewer();
+  renderKpis({ active: 0, onTrack: 0, atRisk: 0, delayed: 0 });
+  renderProjects([]);
+  document.getElementById("sheet-source-input").value = "";
+  setFeedback("Paste a Google link then click View Project.");
+}
+
+function init() {
+  document.getElementById("sheet-source-form").addEventListener("submit", handleSubmit);
+  document.getElementById("sheet-source-reset").addEventListener("click", resetView);
+
+  const saved = localStorage.getItem(LOCAL_SOURCE_KEY);
+  if (saved) {
+    try {
+      document.getElementById("sheet-source-input").value = saved;
+      const url = parseGoogleLink(saved);
+      setViewer(buildViewerUrl(url));
+      loadProjectsFromSheet(url);
+    } catch {
+      localStorage.removeItem(LOCAL_SOURCE_KEY);
+      setFeedback("Paste a Google link then click View Project.");
+    }
+  } else {
+    setFeedback("Paste a Google link then click View Project.");
+    renderProjects([]);
+  }
+}
+
+init();
