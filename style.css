@@ -54,17 +54,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 90px;
-  margin-right: -150px;
+  margin: 0;
 }
 
 .giant-text {
-  font-size: 12vw;
+  font-size: clamp(44px, 8vw, 140px);
   font-weight: 600;
-  line-height: 0.8;
+  line-height: 0.95;
   letter-spacing: -0.02em;
   padding-bottom: 20px;
-  width: fit-content;
+  width: min(100%, 14ch);
+  text-align: center;
   text-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -782,3 +782,4 @@ body {
     align-items: flex-start;
   }
 }
+
