@@ -55,6 +55,7 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0;
+  width: 100%;
 }
 
 .giant-text {
@@ -63,9 +64,11 @@ body {
   line-height: 0.95;
   letter-spacing: -0.02em;
   padding-bottom: 20px;
-  width: min(100%, 14ch);
+  width: 100%;
+  max-width: 14ch;
+  margin: 0 auto;
   text-align: center;
-  text-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
 }
 
 .hero-right {
@@ -782,5 +785,6 @@ body {
     align-items: flex-start;
   }
 }
+
 
 
