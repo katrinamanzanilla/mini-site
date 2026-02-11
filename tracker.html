@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PMG Portal</title>
+  <title>PMG Portal - Issue Tracker</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header class="navbar">
     <div class="logo">
-      <a href="index.html" class="active"><img src="logo.PNG" alt="APEC" class="logo-img"></a>
+      <a href="index.html"><img src="logo.PNG" alt="APEC" class="logo-img"></a>
     </div>
 
     <nav class="nav-links">
@@ -26,41 +26,21 @@
     <div class="status">APEC HOMES</div>
   </header>
 
-
   <main class="content tracker-page">
-    <div class="tracker-shell">
-      <section class="tracker-top">
-        <h1 class="page-title">Issue Tracker</h1>
-      </section>
+    <div class="tracker-shell alt-layout">
+      <h1 class="page-title">Issue Tracker</h1>
 
-      <section class="tracker-metrics" aria-label="Issue summary">
-        <article class="metric-card">
-          <span class="metric-label">Open</span>
-          <strong class="metric-value">08</strong>
-        </article>
-        <article class="metric-card">
-          <span class="metric-label">In Progress</span>
-          <strong class="metric-value">05</strong>
-        </article>
-        <article class="metric-card">
-          <span class="metric-label">Resolved (30d)</span>
-          <strong class="metric-value">14</strong>
-        </article>
-      </section>
+      <section class="tracker-workspace two-panel" aria-label="Issue tracker workspace">
+        <article class="tracker-panel quick-add-panel">
+          <h2 class="tracker-panel-title">Quick Add</h2>
+          <p class="panel-text">Create one standardized issue row and paste it into your <strong>Issue Register</strong> sheet.</p>
 
-      <section class="tracker-workspace" aria-label="Issue tracker workspace">
-        <article class="tracker-panel intake-panel">
-          <h2 class="tracker-panel-title">New Issue Intake</h2>
-          <p class="panel-text">Use this layout for consistent issue records in Google Sheets.</p>
           <form id="issue-form" class="issue-form">
             <label>
               Title
               <input type="text" id="issue-title" placeholder="Ex: Login page not responsive" required>
             </label>
-            <label>
-              Description
-              <textarea id="issue-description" rows="3" placeholder="Describe the problem clearly"></textarea>
-            </label>
+
             <div class="form-grid">
               <label>
                 Status
@@ -79,6 +59,7 @@
                 </select>
               </label>
             </div>
+
             <div class="form-grid">
               <label>
                 Assignee
@@ -89,77 +70,67 @@
                 <input type="date" id="issue-date">
               </label>
             </div>
+
+            <label>
+              Notes
+              <textarea id="issue-notes" rows="3" placeholder="Short issue context"></textarea>
+            </label>
+
             <div class="tracker-actions">
-              <button type="submit" class="tracker-btn primary">Copy row for Google Sheets</button>
+              <button type="submit" class="tracker-btn primary" id="copy-row-btn">Add</button>
+              <button type="button" class="tracker-btn ghost" id="reset-btn">Reset</button>
               <a class="tracker-btn ghost" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener noreferrer">Open Google Sheets</a>
             </div>
             <p class="copy-feedback" id="copy-feedback" aria-live="polite"></p>
+            <p class="add-feedback" id="add-feedback" aria-live="polite"></p>
           </form>
+
         </article>
 
-        <article class="tracker-panel register-panel">
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Suggested Sheet Layout</h2>
-            <span class="layout-note">Tab name: <strong>Issue Register</strong></span>
+        <article class="tracker-panel sheet-panel">
+          <h2 class="tracker-panel-title">Google Tracker View</h2>
+          <p class="panel-text">Paste a published Google Sheet embed link. This keeps the page as a visual container while Sheets stays your source of truth.</p>
+
+          <div class="tracker-metrics inline-metrics" aria-label="Issue summary filters">
+            <button type="button" class="status-badge open filter-chip active" data-filter="Open">Open</button>
+            <button type="button" class="status-badge in-progress filter-chip" data-filter="In Progress">In Progress</button>
+            <button type="button" class="status-badge resolved filter-chip" data-filter="Resolved">Resolved</button>
+            <button type="button" class="status-badge filter-chip all" data-filter="All">All</button>
           </div>
-          <div class="sheet-preview-wrap">
-            <table class="issues-table">
-              <thead>
-                <tr>
-                  <th>Issue ID</th>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                  <th>Priority</th>
-                  <th>Assigned To</th>
-                  <th>Reported On</th>
-                  <th>Due Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="issue-id">#001</td>
-                  <td class="issue-title">Login page not responsive</td>
-                  <td>Buttons overlap on mobile viewports</td>
-                  <td><span class="status-badge open">Open</span></td>
-                  <td><span class="priority high">High</span></td>
-                  <td>John Doe</td>
-                  <td>Jan 15, 2026</td>
-                  <td>Jan 20, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-id">#002</td>
-                  <td class="issue-title">Database connection timeout</td>
-                  <td>Intermittent timeout from analytics API</td>
-                  <td><span class="status-badge in-progress">In Progress</span></td>
-                  <td><span class="priority high">High</span></td>
-                  <td>Jane Smith</td>
-                  <td>Jan 18, 2026</td>
-                  <td>Jan 23, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-id">#003</td>
-                  <td class="issue-title">UI spacing inconsistency</td>
-                  <td>Card paddings differ between pages</td>
-                  <td><span class="status-badge open">Open</span></td>
-                  <td><span class="priority medium">Medium</span></td>
-                  <td>Unassigned</td>
-                  <td>Jan 20, 2026</td>
-                  <td>Jan 27, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-id">#004</td>
-                  <td class="issue-title">API performance optimization</td>
-                  <td>Optimize endpoint response time under load</td>
-                  <td><span class="status-badge resolved">Resolved</span></td>
-                  <td><span class="priority medium">Medium</span></td>
-                  <td>Mike Johnson</td>
-                  <td>Jan 22, 2026</td>
-                  <td>Jan 24, 2026</td>
-                </tr>
-              </tbody>
-            </table>
+
+
+          <section class="local-entries local-entries-inline" aria-label="Filtered recent local entries">
+            <div class="local-entries-head">
+              <h3>Filtered Recent Entries</h3>
+              <button type="button" class="icon-btn" id="restore-entry-btn" title="Restore" aria-label="Restore last deleted entry" disabled>↩️</button>
+            </div>
+            <ul id="recent-entries" class="entries-list">
+              <li class="empty-entry">No entries yet.</li>
+            </ul>
+          </section>
+
+          <label class="embed-label" for="sheet-url-input">Google Sheets Embed URL</label>
+          <div class="embed-row">
+            <input
+              id="sheet-url-input"
+              type="url"
+              placeholder="https://docs.google.com/spreadsheets/d/e/.../pubhtml?widget=true&headers=false"
+            />
+            <button type="button" id="load-sheet-btn" class="tracker-btn primary">Load</button>
           </div>
+
+          <div id="sheet-stage" class="sheet-stage" aria-live="polite">
+            <div class="sheet-placeholder" id="sheet-placeholder">
+              <h3>Connect your sheet</h3>
+              <p>Use <em>File → Share → Publish to web</em> in Google Sheets, copy the link, then click <strong>Load</strong>.</p>
+              <ol>
+                <li>Publish your Issue Register tab to web.</li>
+                <li>Paste the published URL above.</li>
+                <li>Click Load to render it here.</li>
+              </ol>
+            </div>
+          </div>
+          <p class="copy-feedback" id="embed-feedback" aria-live="polite"></p>
         </article>
       </section>
     </div>
@@ -168,32 +139,210 @@
   <script>
     const issueForm = document.getElementById('issue-form');
     const copyFeedback = document.getElementById('copy-feedback');
+    const addFeedback = document.getElementById('add-feedback');
+    const embedFeedback = document.getElementById('embed-feedback');
+    const resetBtn = document.getElementById('reset-btn');
+    const recentEntries = document.getElementById('recent-entries');
+    const restoreEntryBtn = document.getElementById('restore-entry-btn');
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const loadSheetBtn = document.getElementById('load-sheet-btn');
+    const sheetUrlInput = document.getElementById('sheet-url-input');
+    const sheetStage = document.getElementById('sheet-stage');
+
+    const LOCAL_KEY = 'issueTrackerRecentEntries';
+    const MAX_ENTRIES = 5;
+
+    let deletedEntriesStack = [];
+    let activeFilter = 'Open';
+
+    function formatDate(rawDate) {
+      if (!rawDate) return '-';
+      const parsedDate = new Date(rawDate + 'T00:00:00');
+      if (Number.isNaN(parsedDate.getTime())) return rawDate;
+      return parsedDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    function sanitizeText(value) {
+      return value.replace(/[\t\n\r]+/g, ' ').trim();
+    }
+
+    function getStoredEntries() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveEntries(entries) {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(entries.slice(0, MAX_ENTRIES)));
+    }
+
+    function updateRestoreState() {
+      restoreEntryBtn.disabled = deletedEntriesStack.length === 0;
+    }
+
+    function removeEntry(createdAt) {
+      const entries = getStoredEntries();
+      const targetIndex = entries.findIndex((entry) => entry.createdAt === createdAt);
+      if (targetIndex === -1) return;
+      const [removed] = entries.splice(targetIndex, 1);
+      if (removed) {
+        deletedEntriesStack.push(removed);
+        saveEntries(entries);
+        renderEntries(entries);
+        copyFeedback.textContent = `Deleted \"${removed.title}\" from recent local entries.`;
+        updateRestoreState();
+      }
+    }
+
+    function restoreLastDeletedEntry() {
+      if (!deletedEntriesStack.length) {
+        return;
+      }
+      const entries = getStoredEntries();
+      const restored = deletedEntriesStack.pop();
+      entries.unshift(restored);
+      saveEntries(entries);
+      renderEntries(entries);
+      copyFeedback.textContent = `Restored \"${restored.title}\" to recent local entries.`;
+      updateRestoreState();
+    }
+
+    function applyFilter(entries) {
+      if (activeFilter === 'All') {
+        return entries;
+      }
+      return entries.filter((entry) => entry.status === activeFilter);
+    }
+
+    function renderEntries(entries = getStoredEntries()) {
+      recentEntries.innerHTML = '';
+      const filteredEntries = applyFilter(entries);
+
+      if (!filteredEntries.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'empty-entry';
+        emptyItem.textContent = activeFilter === 'All' ? 'No entries yet.' : `No ${activeFilter.toLowerCase()} entries yet.`;
+        recentEntries.appendChild(emptyItem);
+        return;
+      }
+
+      filteredEntries.forEach((entry) => {
+        const li = document.createElement('li');
+        li.className = 'entry-item';
+
+        const title = document.createElement('strong');
+        title.textContent = entry.title;
+
+        const meta = document.createElement('span');
+        meta.textContent = `${entry.status} • ${entry.priority} • ${entry.when}`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'icon-btn delete-btn';
+        deleteBtn.title = 'Delete';
+        deleteBtn.setAttribute('aria-label', `Delete ${entry.title}`);
+        deleteBtn.textContent = '🗑️';
+        deleteBtn.addEventListener('click', () => removeEntry(entry.createdAt));
+
+        li.append(title, meta, deleteBtn);
+        recentEntries.appendChild(li);
+      });
+    }
+
+    function saveEntry(entry) {
+      const entries = getStoredEntries();
+      entries.unshift(entry);
+      saveEntries(entries);
+      renderEntries(entries);
+    }
 
     issueForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
+      const issueTitle = sanitizeText(document.getElementById('issue-title').value || '-');
+      const issueStatus = document.getElementById('issue-status').value;
+      const issuePriority = document.getElementById('issue-priority').value;
+      const issueAssignee = sanitizeText(document.getElementById('issue-assignee').value || 'Unassigned');
+      const issueDate = formatDate(document.getElementById('issue-date').value);
+      const issueNotes = sanitizeText(document.getElementById('issue-notes').value || '-');
+      const reportedOn = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
       const rowValues = [
         'AUTO-ID',
-        document.getElementById('issue-title').value.trim() || '-',
-        document.getElementById('issue-description').value.trim() || '-',
-        document.getElementById('issue-status').value,
-        document.getElementById('issue-priority').value,
-        document.getElementById('issue-assignee').value.trim() || 'Unassigned',
-        new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-        document.getElementById('issue-date').value || '-'
+        issueTitle,
+        issueNotes,
+        issueStatus,
+        issuePriority,
+        issueAssignee,
+        reportedOn,
+        issueDate
       ];
 
       const tsvRow = rowValues.join('\t');
 
       try {
         await navigator.clipboard.writeText(tsvRow);
-        copyFeedback.textContent = 'Copied. Paste directly into the next empty row in your Google Sheet.';
+        copyFeedback.textContent = 'Row copied for Google Sheets.';
       } catch (error) {
-        copyFeedback.textContent = 'Could not copy automatically. Select and copy this row: ' + tsvRow;
+        copyFeedback.textContent = `Copy blocked by browser. Manually copy this row: ${tsvRow}`;
       }
+
+      addFeedback.textContent = '✅ Issue added successfully to Recent Entries.';
+
+      saveEntry({
+        createdAt: Date.now(),
+        title: issueTitle,
+        status: issueStatus,
+        priority: issuePriority,
+        when: reportedOn
+      });
     });
+
+    resetBtn.addEventListener('click', () => {
+      issueForm.reset();
+      copyFeedback.textContent = 'Form reset.';
+      addFeedback.textContent = '';
+    });
+
+    restoreEntryBtn.addEventListener('click', restoreLastDeletedEntry);
+
+    filterChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        activeFilter = chip.dataset.filter;
+        filterChips.forEach((btn) => btn.classList.toggle('active', btn === chip));
+        renderEntries();
+      });
+    });
+
+    loadSheetBtn.addEventListener('click', () => {
+      const rawUrl = sheetUrlInput.value.trim();
+      if (!rawUrl) {
+        embedFeedback.textContent = 'Please paste a Google Sheets published URL first.';
+        return;
+      }
+
+      const validGoogleSheet = /^https:\/\/docs\.google\.com\/spreadsheets\//.test(rawUrl);
+      if (!validGoogleSheet) {
+        embedFeedback.textContent = 'Use a valid docs.google.com/spreadsheets published URL.';
+        return;
+      }
+
+      const iframe = document.createElement('iframe');
+      iframe.src = rawUrl;
+      iframe.loading = 'lazy';
+      iframe.title = 'Google Sheet tracker view';
+      iframe.className = 'sheet-embed';
+
+      sheetStage.innerHTML = '';
+      sheetStage.appendChild(iframe);
+      embedFeedback.textContent = 'Sheet loaded successfully.';
+    });
+
+    updateRestoreState();
+    renderEntries();
   </script>
 
 </body>
 </html>
-
