@@ -31,29 +31,38 @@
     <div class="status-shell">
       <section class="status-top">
         <h1 class="page-title">Project Status Overview</h1>
-        <p class="status-intro">A central snapshot of project health, milestones, and blockers. Sync updates weekly and maintain one source of truth using Google Sheets and Google Looker Studio.</p>
+       <p class="status-intro">A central snapshot of project health, milestones, and blockers. Sync updates weekly and maintain one source of truth using Google Sheets and Google Looker Studio.</p>
         <div class="status-actions">
-          <a class="tracker-btn primary" href="https://docs.google.com/spreadsheets/d/1BHTM5Jx7xAyaRnzuyjD38-Iz5mlQddkA8s2J2ZatIXI/edit?usp=drive_link" target="_blank" rel="noopener noreferrer">Open Master Status Sheet</a>
-          <a class="tracker-btn ghost" href="https://lookerstudio.google.com/reporting/e8ae21da-77aa-4ac1-b543-1fc3b3844152" target="_blank" rel="noopener noreferrer">Open Looker Studio Dashboard</a>
+          <a class="tracker-btn primary" href="https://lookerstudio.google.com/reporting/e8ae21da-77aa-4ac1-b543-1fc3b3844152" target="_blank" rel="noopener noreferrer">Open Looker Studio Dashboard</a>
         </div>
+      </section>
+        <form id="sheet-source-form" class="status-source-form" autocomplete="off">
+          <label for="sheet-source-input" class="status-source-label">Google Sheet link</label>
+          <div class="status-source-row">
+            <input id="sheet-source-input" class="status-source-input" type="url" placeholder="Paste a Google Sheets URL used for project status" required>
+            <button type="submit" class="drive-button">Use this sheet</button>
+            <button type="button" id="sheet-source-reset" class="tracker-btn ghost">Reset</button>
+          </div>
+          <p id="sheet-source-feedback" class="copy-feedback" aria-live="polite"></p>
+        </form>
       </section>
 
       <section class="status-kpis" aria-label="Portfolio KPI overview">
         <article class="metric-card">
           <span class="metric-label">Active Projects</span>
-          <strong class="metric-value">12</strong>
+          <strong class="metric-value" id="kpi-active-projects">--</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">On Track</span>
-          <strong class="metric-value">08</strong>
+          <strong class="metric-value" id="kpi-on-track">--</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">At Risk</span>
-          <strong class="metric-value">03</strong>
+          <strong class="metric-value" id="kpi-at-risk">--</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">Delayed</span>
-          <strong class="metric-value">01</strong>
+          <strong class="metric-value" id="kpi-delayed">--</strong>
         </article>
       </section>
 
@@ -77,48 +86,7 @@
                   <th>Last Update</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td class="issue-title">Township Expansion - North</td>
-                  <td>PMO Team A</td>
-                  <td>Execution</td>
-                  <td>72%</td>
-                  <td><span class="status-indicator on-track">On Track</span></td>
-                  <td>Site utility handover</td>
-                  <td>Feb 20, 2026</td>
-                  <td>Feb 08, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-title">Digital Sales Portal</td>
-                  <td>PMO Team B</td>
-                  <td>UAT</td>
-                  <td>58%</td>
-                  <td><span class="status-indicator at-risk">At Risk</span></td>
-                  <td>UAT signoff</td>
-                  <td>Mar 03, 2026</td>
-                  <td>Feb 09, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-title">CRM Data Cleansing</td>
-                  <td>PMO Team C</td>
-                  <td>Planning</td>
-                  <td>32%</td>
-                  <td><span class="status-indicator delayed">Delayed</span></td>
-                  <td>Baseline approval</td>
-                  <td>Feb 27, 2026</td>
-                  <td>Feb 07, 2026</td>
-                </tr>
-                <tr>
-                  <td class="issue-title">Client Self-Service Enhancements</td>
-                  <td>PMO Team D</td>
-                  <td>Deployment</td>
-                  <td>94%</td>
-                  <td><span class="status-indicator completed">Completed</span></td>
-                  <td>Post-launch report</td>
-                  <td>Feb 14, 2026</td>
-                  <td>Feb 10, 2026</td>
-                </tr>
-              </tbody>
+              <tbody id="status-table-body"></tbody>
             </table>
           </div>
         </article>
@@ -145,6 +113,8 @@
       </section>
     </div>
   </main>
+
+  <script src="projstat.js"></script>
 
 </body>
 </html>
