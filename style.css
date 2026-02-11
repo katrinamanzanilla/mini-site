@@ -426,6 +426,43 @@ body {
   font-weight: 600;
 }
 
+
+.status-scroll-cue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border: 1px dashed #d6d0ca;
+  background: #fbf8f4;
+}
+
+.status-scroll-cue.hidden {
+  display: none;
+}
+
+.status-scroll-copy {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.status-scroll-link {
+  color: #111;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.35);
+  transition: opacity 0.2s ease;
+}
+
+.status-scroll-link:hover {
+  opacity: 0.66;
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -933,6 +970,11 @@ body {
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .status-scroll-cue {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .panel-title-row {
