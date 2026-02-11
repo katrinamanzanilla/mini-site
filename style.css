@@ -336,11 +336,40 @@ body {
   opacity: 0.68;
 }
 
-.status-actions {
+.status-source-form {
+  margin-top: 18px;
+}
+
+.status-source-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.status-source-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-source-input {
+  flex: 1 1 320px;
+  min-width: 240px;
+  border: 1px solid #d5d1cd;
+  background-color: #fff;
+  padding: 9px 11px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: #111;
+}
+
+.status-source-input:focus {
+  outline: none;
+  border-color: #111;
 }
 
 .status-kpis {
