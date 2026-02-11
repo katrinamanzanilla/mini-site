@@ -1,27 +1,5 @@
 const LOCAL_SOURCE_KEY = "projectStatusOverviewSource";
 
-const fallbackProjects = [
-  {
-    project: "Township Expansion - North",
-    owner: "PMO Team A",
-    phase: "Execution",
-    progress: "68%",
-    rag: "On Track",
-    milestone: "Utility permit released",
-    targetDate: "Feb 20, 2026",
-    lastUpdate: "Feb 08, 2026"
-  },
-  {
-    project: "Digital Sales Portal",
-    owner: "PMO Team B",
-    phase: "UAT",
-    progress: "74%",
-    rag: "At Risk",
-    milestone: "UAT sign-off",
-    targetDate: "Mar 03, 2026",
-    lastUpdate: "Feb 09, 2026"
-  }
-];
 
 function sanitize(value, fallback = "—") {
   const text = String(value ?? "").trim();
@@ -80,7 +58,7 @@ function normalizeProject(row) {
     owner: sanitize(pickField(row, ["owner", "lead", "column 2"])),
     phase: sanitize(pickField(row, ["phase", "stage", "column 3"])),
     progress: sanitize(pickField(row, ["progress", "progress %", "column 4"])),
-    rag: sanitize(pickField(row, ["rag", "status", "column 5"])),
+    rag: sanitize(pickField(row, ["rag", "rag status", "health", "status", "column 5"])),
     milestone: sanitize(pickField(row, ["next milestone", "milestone", "column 6"])),
     targetDate: sanitize(pickField(row, ["target date", "due date", "column 7"])),
     lastUpdate: sanitize(pickField(row, ["last update", "updated", "column 8"]))
@@ -95,6 +73,10 @@ function isGoogleUrl(url) {
     "forms.google.com",
     "lookerstudio.google.com"
   ].some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`));
+}
+
+function isLookerStudioUrl(url) {
+  return url.hostname === "lookerstudio.google.com" || url.hostname.endsWith(".lookerstudio.google.com");
 }
 
 function parseGoogleLink(rawValue) {
@@ -141,6 +123,21 @@ function buildViewerUrl(url) {
     }
   }
 
+  if (isLookerStudioUrl(url)) {
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts[0] === "u" && parts.length > 2) {
+      parts.splice(0, 2);
+    }
+
+    if (parts[0] === "reporting" && parts[1]) {
+      const pageId = parts[3] || "";
+      const embedPath = pageId
+        ? `/embed/reporting/${encodeURIComponent(parts[1])}/page/${encodeURIComponent(pageId)}`
+        : `/embed/reporting/${encodeURIComponent(parts[1])}`;
+      return `https://lookerstudio.google.com${embedPath}`;
+    }
+  }
+
   return url.toString();
 }
 
@@ -155,13 +152,56 @@ function buildSheetApiUrl(source) {
   return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(source.sheetId)}/gviz/tq?${params.toString()}`;
 }
 
+function classifyRag(ragValue) {
+  const normalized = String(ragValue ?? "").trim().toLowerCase();
+
+  if (!normalized || normalized === "—") {
+    return "unknown";
+  }
+
+  const onTrackTerms = ["on track", "ontrack", "green", "ok", "healthy", "complete", "completed", "done"];
+  const atRiskTerms = ["at risk", "atrisk", "amber", "yellow", "warning"];
+  const delayedTerms = ["delay", "delayed", "red", "critical", "blocked", "off track", "offtrack"];
+
+  if (onTrackTerms.some((term) => normalized.includes(term))) {
+    return "onTrack";
+  }
+
+  if (atRiskTerms.some((term) => normalized.includes(term))) {
+    return "atRisk";
+  }
+
+  if (delayedTerms.some((term) => normalized.includes(term))) {
+    return "delayed";
+  }
+
+  if (normalized === "g") return "onTrack";
+  if (normalized === "a") return "atRisk";
+  if (normalized === "r") return "delayed";
+
+  return "unknown";
+}
+
 function getKpis(projects) {
-  return {
+  const totals = {
     active: projects.length,
-    onTrack: projects.filter((project) => project.rag.toLowerCase() === "on track").length,
-    atRisk: projects.filter((project) => project.rag.toLowerCase() === "at risk").length,
-    delayed: projects.filter((project) => project.rag.toLowerCase() === "delayed").length
+    onTrack: 0,
+    atRisk: 0,
+    delayed: 0
   };
+
+  projects.forEach((project) => {
+    const bucket = classifyRag(project.rag);
+    if (bucket === "onTrack") {
+      totals.onTrack += 1;
+    } else if (bucket === "atRisk") {
+      totals.atRisk += 1;
+    } else if (bucket === "delayed") {
+      totals.delayed += 1;
+    }
+  });
+
+  return totals;
 }
 
 function renderKpis(kpis) {
@@ -208,9 +248,15 @@ function clearViewer() {
 async function loadProjectsFromSheet(url) {
   const source = getSheetSource(url);
   if (!source) {
-    renderKpis(getKpis(fallbackProjects));
-    renderProjects(fallbackProjects);
-    setFeedback("Google link opened. For full project table auto-load, use a Google Sheets link.");
+    renderKpis({ active: 0, onTrack: 0, atRisk: 0, delayed: 0 });
+    renderProjects([]);
+
+    if (isLookerStudioUrl(url)) {
+      setFeedback("Looker Studio dashboard loaded in preview. For KPI counting, use a Google Sheets link with a RAG column.");
+    } else {
+      setFeedback("Google link opened. To auto-count KPIs by RAG, use a Google Sheets project status link.");
+    }
+
     return;
   }
 
@@ -233,9 +279,9 @@ async function loadProjectsFromSheet(url) {
     renderProjects(projects);
     setFeedback("Project status loaded successfully.");
   } catch {
-    renderKpis(getKpis(fallbackProjects));
-    renderProjects(fallbackProjects);
-    setFeedback("Could not read sheet rows. Make sure the sheet is shared to Anyone with the link (Viewer).");
+    renderKpis({ active: 0, onTrack: 0, atRisk: 0, delayed: 0 });
+    renderProjects([]);
+    setFeedback("Could not read sheet rows. Make sure the sheet is shared to Anyone with the link (Viewer) and has a RAG column.");
   }
 }
 
