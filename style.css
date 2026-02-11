@@ -350,6 +350,31 @@ body {
   margin-bottom: 24px;
 }
 
+.metric-card {
+  border: 1px solid #ddd9d4;
+  background: linear-gradient(135deg, #fdfcfb 0%, #f7f4f1 100%);
+  padding: 18px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.04);
+}
+
+.metric-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.metric-value {
+  font-size: 38px;
+  font-family: 'Playfair Display', serif;
+  line-height: 1;
+  font-weight: 600;
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -360,10 +385,64 @@ body {
   border: 1px solid #ddd9d4;
   background-color: #fdfcfb;
   padding: 24px;
+  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.05);
 }
 
 .status-panel.full-width {
   grid-column: 1 / -1;
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.layout-note {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.58;
+}
+
+.sheet-preview-wrap {
+  border: 1px solid #e6e1dc;
+  overflow-x: auto;
+  background-color: #fff;
+}
+
+.issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.issues-table th,
+.issues-table td {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid #efebe7;
+}
+
+.issues-table thead th {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  background-color: #f8f5f2;
+  position: sticky;
+  top: 0;
+}
+
+.issues-table tbody tr:hover {
+  background-color: #faf7f4;
+}
+
+.issues-table .issue-title {
+  font-weight: 500;
 }
 
 .status-list {
