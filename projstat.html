@@ -26,17 +26,16 @@
     <div class="status">APEC HOMES</div>
   </header>
 
-
   <main class="content status-page">
     <div class="status-shell">
-           <section class="status-top">
+      <section class="status-top">
         <h1 class="page-title">Project Status Overview</h1>
-        <p class="status-intro">A central snapshot of project health, milestones, and blockers. Sync updates weekly and maintain one source of truth using Google Sheets.</p>
+        <p class="status-intro">Paste one Google link (Google Sheets, Drive, Docs, Forms, or Apps Script) then click <strong>View Project</strong>.</p>
         <form id="sheet-source-form" class="status-source-form" autocomplete="off">
-          <label for="sheet-source-input" class="status-source-label">Google Sheet link</label>
+          <label for="sheet-source-input" class="status-source-label">Google link</label>
           <div class="status-source-row">
-            <input id="sheet-source-input" class="status-source-input" type="url" placeholder="Paste a Google Sheets URL used for project status" required>
-            <button type="submit" class="drive-button">Use this sheet</button>
+            <input id="sheet-source-input" class="status-source-input" type="url" placeholder="Paste your Google link here" required>
+            <button type="submit" id="use-file-button" class="drive-button">View Project</button>
             <button type="button" id="sheet-source-reset" class="tracker-btn ghost">Reset</button>
           </div>
           <p id="sheet-source-feedback" class="copy-feedback" aria-live="polite"></p>
@@ -46,27 +45,42 @@
       <section class="status-kpis" aria-label="Portfolio KPI overview">
         <article class="metric-card">
           <span class="metric-label">Active Projects</span>
-          <strong class="metric-value" id="kpi-active-projects">--</strong>
+          <strong class="metric-value" id="kpi-active-projects">00</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">On Track</span>
-          <strong class="metric-value" id="kpi-on-track">--</strong>
+          <strong class="metric-value" id="kpi-on-track">00</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">At Risk</span>
-          <strong class="metric-value" id="kpi-at-risk">--</strong>
+          <strong class="metric-value" id="kpi-at-risk">00</strong>
         </article>
         <article class="metric-card">
           <span class="metric-label">Delayed</span>
-          <strong class="metric-value" id="kpi-delayed">--</strong>
+          <strong class="metric-value" id="kpi-delayed">00</strong>
         </article>
       </section>
 
       <section class="status-grid" aria-label="Project status details">
+        <article class="status-panel full-width" id="google-viewer-wrap" hidden>
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Google Link Preview</h2>
+          </div>
+          <div class="sheet-preview-wrap">
+            <iframe
+              id="google-viewer"
+              title="Google project preview"
+              src="about:blank"
+              style="width: 100%; min-height: 460px; border: 0; border-radius: 12px; background: #fff;"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </div>
+        </article>
+
         <article class="status-panel full-width">
           <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Portfolio Status Register</h2>
-            <span class="layout-note">Source: <strong>Google Sheet / Portfolio Status</strong></span>
+            <h2 class="tracker-panel-title">Project Status Table</h2>
           </div>
           <div class="sheet-preview-wrap">
             <table class="issues-table">
@@ -85,26 +99,6 @@
               <tbody id="status-table-body"></tbody>
             </table>
           </div>
-        </article>
-
-        <article class="status-panel">
-          <h2 class="tracker-panel-title">Weekly Update Format</h2>
-          <ul class="status-list">
-            <li>Progress % updated every Friday</li>
-            <li>RAG based on scope, schedule, and resource risk</li>
-            <li>One next milestone and one key blocker per project</li>
-            <li>Last update date required for every row</li>
-          </ul>
-        </article>
-
-        <article class="status-panel">
-          <h2 class="tracker-panel-title">Google Integration Notes</h2>
-          <ul class="status-list">
-            <li>Use one shared Google Sheet as the master status register</li>
-            <li>Create a dashboard in Looker Studio from that same Sheet</li>
-            <li>Publish dashboard link to G.Links for leadership visibility</li>
-            <li>Lock formula columns and allow update cells only</li>
-          </ul>
         </article>
       </section>
     </div>
