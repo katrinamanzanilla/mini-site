@@ -752,7 +752,7 @@ body {
     justify-content: center;
   }
 
- .giant-text {
+.giant-text {
     font-size: clamp(40px, 14vw, 88px);
   }
 
@@ -785,6 +785,7 @@ body {
     align-items: flex-start;
   }
 }
+
 
 
 
