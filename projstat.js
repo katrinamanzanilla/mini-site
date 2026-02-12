@@ -372,5 +372,3 @@ function init() {
 
 init(); 
 
-
-JS
