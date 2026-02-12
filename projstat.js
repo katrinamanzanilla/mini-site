@@ -370,4 +370,7 @@ function init() {
   bindScrollCue();
 }
 
-init();
+init(); 
+
+
+JS
