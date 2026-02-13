@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PMG Portal</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <header class="navbar">
     <div class="logo">
       <a href="index.html" class="active"><img src="logo.PNG" alt="APEC" class="logo-img"></a>
@@ -30,19 +28,19 @@
     <div class="status-shell">
       <section class="status-top">
         <h1 class="page-title">Project Status Overview</h1>
-        <p class="status-intro">Paste one Google link (Google Sheets, Drive, Docs, Forms, or Apps Script) then click <strong>View Project</strong>.</p>
+        <p class="status-intro">Paste one Google link (Google Sheets, Drive, Docs, Forms, or Apps Script), then click <strong>VIEW DASHBOARD</strong>.</p>
         <form id="sheet-source-form" class="status-source-form" autocomplete="off">
           <label for="sheet-source-input" class="status-source-label">Google link</label>
           <div class="status-source-row">
-            <input id="sheet-source-input" class="status-source-input" type="url" placeholder="Paste your Google link here" required>
-            <button type="submit" id="use-file-button" class="drive-button">View Project</button>
+            <input id="sheet-source-input" class="status-source-input" type="text" placeholder="Paste your Google link here" required>
+            <button type="submit" id="use-file-button" class="drive-button">VIEW DASHBOARD</button>
             <button type="button" id="sheet-source-reset" class="tracker-btn ghost">Reset</button>
           </div>
           <p id="sheet-source-feedback" class="copy-feedback" aria-live="polite"></p>
         </form>
       </section>
 
-            <section class="status-kpis" aria-label="Portfolio KPI overview">
+      <section class="status-kpis" aria-label="Portfolio KPI overview">
         <article class="metric-card">
           <span class="metric-label">Active Projects</span>
           <strong class="metric-value" id="kpi-active-projects">00</strong>
@@ -58,7 +56,7 @@
         <article class="metric-card">
           <span class="metric-label">Delayed</span>
           <strong class="metric-value" id="kpi-delayed">00</strong>
-                </article>
+        </article>
       </section>
 
       <div class="status-scroll-cue" id="status-scroll-cue" role="note" aria-live="polite">
@@ -72,19 +70,58 @@
             <h2 class="tracker-panel-title">Google Link Preview</h2>
           </div>
           <div class="sheet-preview-wrap">
-               <iframe␊
+            <iframe
               id="google-viewer"
               title="Google project preview"
               src="about:blank"
               style="width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: #fff;"
-              loading="lazy"
-                <article class="status-panel full-width" id="project-status-table" tabindex="-1">
-          <div class="panel-title-row">
-            <span class="layout-note">Scroll horizontally to see all columns</span>
+              loading="lazy">
+            </iframe>
           </div>
+        </article>
+
+        <article class="status-panel">
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Status Snapshot</h2>
+          </div>
+          <ul class="status-list" id="status-snapshot-list">
+            <li>No project data yet.</li>
+          </ul>
+        </article>
+
+        <article class="status-panel">
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Timeline</h2>
+          </div>
+          <ul class="status-list" id="timeline-list">
+            <li>No timeline entries yet.</li>
+          </ul>
+        </article>
+
         <article class="status-panel full-width">
           <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Inserted Link History</h2>
+            <span class="layout-note">Latest links loaded into dashboard</span>
+          </div>
+          <div class="sheet-preview-wrap">
+            <table class="issues-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Google Link</th>
+                  <th>Type</th>
+                  <th>Inserted</th>
+                </tr>
+              </thead>
+              <tbody id="link-history-body"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="status-panel full-width" id="project-status-table" tabindex="-1">
+          <div class="panel-title-row">
             <h2 class="tracker-panel-title">Project Status Table</h2>
+            <span class="layout-note">Scroll horizontally to see all columns</span>
           </div>
           <div class="sheet-preview-wrap">
             <table class="issues-table">
@@ -109,8 +146,5 @@
   </main>
 
   <script src="projstat.js"></script>
-
 </body>
 </html>
-
-
