@@ -29,25 +29,37 @@
   <main class="content tracker-page">
     <div class="tracker-shell alt-layout">
       <h1 class="page-title">Issue Tracker</h1>
-      <p class="tracker-subtitle">Clean issue logging with lightweight local tracking and an optional Google Sheets embed.</p>
+      <p class="tracker-subtitle">Log issues with complete details, keep a restorable issue list, and monitor counts per status in real-time.</p>
 
       <section class="tracker-workspace two-panel" aria-label="Issue tracker workspace">
         <article class="tracker-panel quick-add-panel">
-          <h2 class="tracker-panel-title">Quick Add</h2>
-          <p class="panel-text">Create one standardized issue row and paste it into your <strong>Issue Register</strong> sheet.</p>
+          <h2 class="tracker-panel-title">Submit Issue</h2>
+          <p class="panel-text">Fill out the issue details below. Click <strong>Add</strong> to save it instantly to your issue list.</p>
 
           <form id="issue-form" class="issue-form">
+            <div class="form-grid">
+              <label>
+                Project Name
+                <input type="text" id="issue-project" placeholder="Ex: Portal Revamp" required>
+              </label>
+              <label>
+                Issue Date
+                <input type="date" id="issue-date" required>
+              </label>
+            </div>
+
             <label>
-              Title
+              Issue Title
               <input type="text" id="issue-title" placeholder="Ex: Login page not responsive" required>
             </label>
 
             <div class="form-grid">
               <label>
                 Status
-                <select id="issue-status">
+                <select id="issue-status" required>
                   <option>Open</option>
                   <option>In Progress</option>
+                  <option>Delayed</option>
                   <option>Resolved</option>
                 </select>
               </label>
@@ -67,8 +79,8 @@
                 <input type="text" id="issue-assignee" placeholder="Ex: John Doe">
               </label>
               <label>
-                Due Date
-                <input type="date" id="issue-date">
+                Target Resolution Date
+                <input type="date" id="issue-target-date">
               </label>
             </div>
 
@@ -78,9 +90,9 @@
             </label>
 
             <div class="tracker-actions">
-              <button type="submit" class="tracker-btn primary" id="copy-row-btn">Add</button>
+              <button type="submit" class="tracker-btn primary" id="add-entry-btn">Add</button>
               <button type="button" class="tracker-btn ghost" id="reset-btn">Reset</button>
-              <a class="tracker-btn ghost" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener noreferrer">Open Google Sheets</a>
+              <button type="button" class="tracker-btn ghost" id="restore-entry-btn" disabled>Restore Last Deleted</button>
             </div>
             <p class="copy-feedback" id="copy-feedback" aria-live="polite"></p>
             <p class="add-feedback" id="add-feedback" aria-live="polite"></p>
@@ -89,49 +101,31 @@
         </article>
 
         <article class="tracker-panel sheet-panel">
-          <h2 class="tracker-panel-title">Google Tracker View</h2>
-          <p class="panel-text">Paste a published Google Sheet embed link. This keeps the page as a visual container while Sheets stays your source of truth.</p>
+          <h2 class="tracker-panel-title">Issue Dashboard</h2>
+          <p class="panel-text">Status boxes show how many issues exist per status (for example, <strong>Delayed</strong>).</p>
 
-          <div class="tracker-metrics inline-metrics" aria-label="Issue summary filters">
-            <button type="button" class="status-badge open filter-chip active" data-filter="Open">Open</button>
-            <button type="button" class="status-badge in-progress filter-chip" data-filter="In Progress">In Progress</button>
-            <button type="button" class="status-badge resolved filter-chip" data-filter="Resolved">Resolved</button>
-            <button type="button" class="status-badge filter-chip all" data-filter="All">All</button>
-          </div>
+          <section aria-label="Issue status summary" class="status-summary-grid" id="status-summary-grid"></section>
 
-
-          <section class="local-entries local-entries-inline" aria-label="Filtered recent local entries">
+          <section class="local-entries local-entries-inline" aria-label="Saved issue entries">
             <div class="local-entries-head">
-              <h3>Filtered Recent Entries</h3>
-                          <button type="button" class="icon-btn" id="restore-entry-btn" title="Restore" aria-label="Restore last deleted entry" disabled>Restore</button>
+              <h3>Saved Issue List</h3>
             </div>
-            <ul id="recent-entries" class="entries-list">
-              <li class="empty-entry">No entries yet.</li>
-            </ul>
+
+            <div class="entries-table-wrap">
+              <table class="issues-table">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Issue Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-entries"></tbody>
+              </table>
+            </div>
           </section>
-
-          <label class="embed-label" for="sheet-url-input">Google Sheets Embed URL</label>
-          <div class="embed-row">
-            <input
-              id="sheet-url-input"
-              type="url"
-              placeholder="https://docs.google.com/spreadsheets/d/e/.../pubhtml?widget=true&headers=false"
-            />
-            <button type="button" id="load-sheet-btn" class="tracker-btn primary">Load</button>
-          </div>
-
-          <div id="sheet-stage" class="sheet-stage" aria-live="polite">
-            <div class="sheet-placeholder" id="sheet-placeholder">
-              <h3>Connect your sheet</h3>
-              <p>Use <em>File → Share → Publish to web</em> in Google Sheets, copy the link, then click <strong>Load</strong>.</p>
-              <ol>
-                <li>Publish your Issue Register tab to web.</li>
-                <li>Paste the published URL above.</li>
-                <li>Click Load to render it here.</li>
-              </ol>
-            </div>
-          </div>
-          <p class="copy-feedback" id="embed-feedback" aria-live="polite"></p>
         </article>
       </section>
     </div>
@@ -141,20 +135,16 @@
     const issueForm = document.getElementById('issue-form');
     const copyFeedback = document.getElementById('copy-feedback');
     const addFeedback = document.getElementById('add-feedback');
-    const embedFeedback = document.getElementById('embed-feedback');
     const resetBtn = document.getElementById('reset-btn');
     const recentEntries = document.getElementById('recent-entries');
     const restoreEntryBtn = document.getElementById('restore-entry-btn');
-    const filterChips = document.querySelectorAll('.filter-chip');
-    const loadSheetBtn = document.getElementById('load-sheet-btn');
-    const sheetUrlInput = document.getElementById('sheet-url-input');
-    const sheetStage = document.getElementById('sheet-stage');
+    const statusSummaryGrid = document.getElementById('status-summary-grid');
 
     const LOCAL_KEY = 'issueTrackerRecentEntries';
-    const MAX_ENTRIES = 5;
+    const MAX_ENTRIES = 100;
+    const STATUS_TYPES = ['Open', 'In Progress', 'Delayed', 'Resolved'];
 
     let deletedEntriesStack = [];
-    let activeFilter = 'Open';
 
     function formatDate(rawDate) {
       if (!rawDate) return '-';
@@ -164,7 +154,7 @@
     }
 
     function sanitizeText(value) {
-      return value.replace(/[\t\n\r]+/g, ' ').trim();
+      return String(value || '').replace(/[\t\n\r]+/g, ' ').trim();
     }
 
     function getStoredEntries() {
@@ -187,12 +177,13 @@
       const entries = getStoredEntries();
       const targetIndex = entries.findIndex((entry) => entry.createdAt === createdAt);
       if (targetIndex === -1) return;
+
       const [removed] = entries.splice(targetIndex, 1);
       if (removed) {
         deletedEntriesStack.push(removed);
         saveEntries(entries);
         renderEntries(entries);
-        copyFeedback.textContent = `Deleted \"${removed.title}\" from recent local entries.`;
+        addFeedback.textContent = `Deleted "${removed.title}".`;
         updateRestoreState();
       }
     }
@@ -206,50 +197,82 @@
       entries.unshift(restored);
       saveEntries(entries);
       renderEntries(entries);
-      copyFeedback.textContent = `Restored \"${restored.title}\" to recent local entries.`;
+      addFeedback.textContent = `Restored "${restored.title}".`;
       updateRestoreState();
     }
 
-    function applyFilter(entries) {
-      if (activeFilter === 'All') {
-        return entries;
-      }
-      return entries.filter((entry) => entry.status === activeFilter);
+    function renderStatusSummary(entries) {
+      const counts = STATUS_TYPES.reduce((acc, status) => {
+        acc[status] = 0;
+        return acc;
+      }, {});
+
+      entries.forEach((entry) => {
+        if (!counts[entry.status] && counts[entry.status] !== 0) {
+          counts[entry.status] = 0;
+        }
+        counts[entry.status] += 1;
+      });
+
+      statusSummaryGrid.innerHTML = '';
+      Object.entries(counts).forEach(([status, count]) => {
+        const box = document.createElement('article');
+        box.className = 'status-summary-box';
+
+        const label = document.createElement('span');
+        label.className = 'status-summary-label';
+        label.textContent = status;
+
+        const value = document.createElement('strong');
+        value.className = 'status-summary-value';
+        value.textContent = String(count).padStart(2, '0');
+
+        box.append(label, value);
+        statusSummaryGrid.appendChild(box);
+      });
     }
 
     function renderEntries(entries = getStoredEntries()) {
       recentEntries.innerHTML = '';
-      const filteredEntries = applyFilter(entries);
 
-      if (!filteredEntries.length) {
-        const emptyItem = document.createElement('li');
-        emptyItem.className = 'empty-entry';
-        emptyItem.textContent = activeFilter === 'All' ? 'No entries yet.' : `No ${activeFilter.toLowerCase()} entries yet.`;
-        recentEntries.appendChild(emptyItem);
+      if (!entries.length) {
+        recentEntries.innerHTML = '<tr><td colspan="5" class="empty-entry">No entries yet.</td></tr>';
+        renderStatusSummary(entries);
         return;
       }
 
-      filteredEntries.forEach((entry) => {
-        const li = document.createElement('li');
-        li.className = 'entry-item';
+      entries.forEach((entry) => {
+        const row = document.createElement('tr');
 
-        const title = document.createElement('strong');
-        title.textContent = entry.title;
+        const projectTd = document.createElement('td');
+        projectTd.textContent = entry.project;
 
-        const meta = document.createElement('span');
-        meta.textContent = `${entry.status} • ${entry.priority} • ${entry.when}`;
+        const titleTd = document.createElement('td');
+        titleTd.textContent = entry.title;
 
+        const statusTd = document.createElement('td');
+        statusTd.textContent = entry.status;
+
+        const issueDateTd = document.createElement('td');
+        issueDateTd.textContent = entry.issueDate;
+
+        row.append(projectTd, titleTd, statusTd, issueDateTd);
+
+        const actionTd = document.createElement('td');
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.className = 'icon-btn delete-btn';
         deleteBtn.title = 'Delete';
         deleteBtn.setAttribute('aria-label', `Delete ${entry.title}`);
-        deleteBtn.textContent = '🗑️';
+        deleteBtn.textContent = 'Delete';
         deleteBtn.addEventListener('click', () => removeEntry(entry.createdAt));
 
-        li.append(title, meta, deleteBtn);
-        recentEntries.appendChild(li);
+        actionTd.appendChild(deleteBtn);
+        row.appendChild(actionTd);
+        recentEntries.appendChild(row);
       });
+
+      renderStatusSummary(entries);
     }
 
     function saveEntry(entry) {
@@ -259,46 +282,34 @@
       renderEntries(entries);
     }
 
-    issueForm.addEventListener('submit', async (event) => {
+    issueForm.addEventListener('submit', (event) => {
       event.preventDefault();
 
+      const issueProject = sanitizeText(document.getElementById('issue-project').value || '-');
       const issueTitle = sanitizeText(document.getElementById('issue-title').value || '-');
       const issueStatus = document.getElementById('issue-status').value;
       const issuePriority = document.getElementById('issue-priority').value;
       const issueAssignee = sanitizeText(document.getElementById('issue-assignee').value || 'Unassigned');
       const issueDate = formatDate(document.getElementById('issue-date').value);
+      const issueTargetDate = formatDate(document.getElementById('issue-target-date').value);
       const issueNotes = sanitizeText(document.getElementById('issue-notes').value || '-');
-      const reportedOn = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
-      const rowValues = [
-        'AUTO-ID',
-        issueTitle,
-        issueNotes,
-        issueStatus,
-        issuePriority,
-        issueAssignee,
-        reportedOn,
-        issueDate
-      ];
-
-      const tsvRow = rowValues.join('\t');
-
-      try {
-        await navigator.clipboard.writeText(tsvRow);
-        copyFeedback.textContent = 'Row copied for Google Sheets.';
-      } catch (error) {
-        copyFeedback.textContent = `Copy blocked by browser. Manually copy this row: ${tsvRow}`;
-      }
-
-      addFeedback.textContent = '✅ Issue added successfully to Recent Entries.';
+      addFeedback.textContent = '✅ Issue added to saved issue list.';
+      copyFeedback.textContent = '';
 
       saveEntry({
         createdAt: Date.now(),
+        project: issueProject,
         title: issueTitle,
         status: issueStatus,
         priority: issuePriority,
-        when: reportedOn
+        assignee: issueAssignee,
+        issueDate,
+        targetDate: issueTargetDate,
+        notes: issueNotes
       });
+
+      issueForm.reset();
     });
 
     resetBtn.addEventListener('click', () => {
@@ -308,38 +319,6 @@
     });
 
     restoreEntryBtn.addEventListener('click', restoreLastDeletedEntry);
-
-    filterChips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        activeFilter = chip.dataset.filter;
-        filterChips.forEach((btn) => btn.classList.toggle('active', btn === chip));
-        renderEntries();
-      });
-    });
-
-    loadSheetBtn.addEventListener('click', () => {
-      const rawUrl = sheetUrlInput.value.trim();
-      if (!rawUrl) {
-        embedFeedback.textContent = 'Please paste a Google Sheets published URL first.';
-        return;
-      }
-
-      const validGoogleSheet = /^https:\/\/docs\.google\.com\/spreadsheets\//.test(rawUrl);
-      if (!validGoogleSheet) {
-        embedFeedback.textContent = 'Use a valid docs.google.com/spreadsheets published URL.';
-        return;
-      }
-
-      const iframe = document.createElement('iframe');
-      iframe.src = rawUrl;
-      iframe.loading = 'lazy';
-      iframe.title = 'Google Sheet tracker view';
-      iframe.className = 'sheet-embed';
-
-      sheetStage.innerHTML = '';
-      sheetStage.appendChild(iframe);
-      embedFeedback.textContent = 'Sheet loaded successfully.';
-    });
 
     updateRestoreState();
     renderEntries();
