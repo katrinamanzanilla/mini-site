@@ -792,6 +792,48 @@ body {
   opacity: 0.7;
 }
 
+
+
+.status-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.status-summary-box {
+  border: 1px solid #d9d4ce;
+  background: #fff;
+  padding: 10px;
+  display: grid;
+  gap: 2px;
+}
+
+.status-summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.7;
+}
+
+.status-summary-value {
+  font-size: 24px;
+  font-family: 'Playfair Display', serif;
+}
+
+.entries-table-wrap {
+  overflow-x: auto;
+}
+
+.entries-table-wrap .issues-table th,
+.entries-table-wrap .issues-table td {
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.entries-table-wrap .issues-table td .icon-btn {
+  min-width: 72px;
+}
 .inline-metrics {
   display: flex;
   flex-wrap: wrap;
