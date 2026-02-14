@@ -108,7 +108,7 @@
 
           <section class="local-entries local-entries-inline" aria-label="Saved issue entries">
             <div class="local-entries-head">
-              <h3>Saved Issue List</h3>
+              <h3>Saved Issue List <span class="saved-count" id="saved-count">(0)</span></h3>
             </div>
 
             <div class="entries-table-wrap">
@@ -139,6 +139,7 @@
     const recentEntries = document.getElementById('recent-entries');
     const restoreEntryBtn = document.getElementById('restore-entry-btn');
     const statusSummaryGrid = document.getElementById('status-summary-grid');
+    const savedCount = document.getElementById('saved-count');
 
     const LOCAL_KEY = 'issueTrackerRecentEntries';
     const MAX_ENTRIES = 100;
@@ -215,7 +216,8 @@
       });
 
       statusSummaryGrid.innerHTML = '';
-      Object.entries(counts).forEach(([status, count]) => {
+      const summaryItems = [['Total', entries.length], ...Object.entries(counts)];
+      summaryItems.forEach(([status, count]) => {
         const box = document.createElement('article');
         box.className = 'status-summary-box';
 
@@ -225,7 +227,7 @@
 
         const value = document.createElement('strong');
         value.className = 'status-summary-value';
-        value.textContent = String(count).padStart(2, '0');
+        value.textContent = String(count);
 
         box.append(label, value);
         statusSummaryGrid.appendChild(box);
@@ -236,10 +238,13 @@
       recentEntries.innerHTML = '';
 
       if (!entries.length) {
+        savedCount.textContent = '(0)';
         recentEntries.innerHTML = '<tr><td colspan="5" class="empty-entry">No entries yet.</td></tr>';
         renderStatusSummary(entries);
         return;
       }
+
+      savedCount.textContent = `(${entries.length})`;
 
       entries.forEach((entry) => {
         const row = document.createElement('tr');
