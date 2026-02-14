@@ -355,6 +355,12 @@ body {
   margin-top: 16px;
 }
 
+.status-source-form-inline {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #ece6e0;
+}
+
 .status-source-label {
   display: block;
   margin-bottom: 8px;
@@ -406,7 +412,7 @@ body {
 
 .status-kpis {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -514,7 +520,7 @@ body {
 .issues-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 1100px;
 }
 
 .issues-table th,
@@ -792,48 +798,6 @@ body {
   opacity: 0.7;
 }
 
-
-
-.status-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.status-summary-box {
-  border: 1px solid #d9d4ce;
-  background: #fff;
-  padding: 10px;
-  display: grid;
-  gap: 2px;
-}
-
-.status-summary-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  opacity: 0.7;
-}
-
-.status-summary-value {
-  font-size: 24px;
-  font-family: 'Playfair Display', serif;
-}
-
-.entries-table-wrap {
-  overflow-x: auto;
-}
-
-.entries-table-wrap .issues-table th,
-.entries-table-wrap .issues-table td {
-  font-size: 12px;
-  vertical-align: middle;
-}
-
-.entries-table-wrap .issues-table td .icon-btn {
-  min-width: 72px;
-}
 .inline-metrics {
   display: flex;
   flex-wrap: wrap;
