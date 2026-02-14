@@ -28,19 +28,34 @@
     <div class="status-shell">
       <section class="status-top">
         <h1 class="page-title">Project Status Overview</h1>
-        <p class="status-intro">Paste one Google link (Google Sheets, Drive, Docs, Forms, or Apps Script), then click <strong>VIEW DASHBOARD</strong>.</p>
+        <p class="status-intro">Add your Google Sheets links below. The page will copy each sheet into tables, then summarize project counts per RAG type.</p>
+
         <form id="sheet-source-form" class="status-source-form" autocomplete="off">
-          <label for="sheet-source-input" class="status-source-label">Google link</label>
+          <label for="sheet-source-input" class="status-source-label">Project Status Google Sheet</label>
           <div class="status-source-row">
-            <input id="sheet-source-input" class="status-source-input" type="text" placeholder="Paste your Google link here" required>
-            <button type="submit" id="use-file-button" class="drive-button">VIEW DASHBOARD</button>
+            <input id="sheet-source-input" class="status-source-input" type="text" placeholder="Paste project status sheet link" required>
+            <button type="submit" id="use-file-button" class="drive-button">VIEW PROJECT</button>
             <button type="button" id="sheet-source-reset" class="tracker-btn ghost">Reset</button>
           </div>
           <p id="sheet-source-feedback" class="copy-feedback" aria-live="polite"></p>
         </form>
+
+        <form id="timeline-source-form" class="status-source-form status-source-form-inline" autocomplete="off">
+          <label for="timeline-source-input" class="status-source-label">Project Timeline Google Sheet</label>
+          <div class="status-source-row">
+            <input id="timeline-source-input" class="status-source-input" type="text" placeholder="Paste timeline sheet link">
+            <button type="submit" id="use-timeline-button" class="drive-button">VIEW TIMELINE</button>
+            <button type="button" id="timeline-source-reset" class="tracker-btn ghost">Clear Timeline</button>
+          </div>
+          <p id="timeline-source-feedback" class="copy-feedback" aria-live="polite"></p>
+        </form>
       </section>
 
       <section class="status-kpis" aria-label="Portfolio KPI overview">
+        <article class="metric-card">
+          <span class="metric-label">Total Projects</span>
+          <strong class="metric-value" id="kpi-total-projects">00</strong>
+        </article>
         <article class="metric-card">
           <span class="metric-label">Active Projects</span>
           <strong class="metric-value" id="kpi-active-projects">00</strong>
@@ -67,7 +82,7 @@
       <section class="status-grid" aria-label="Project status details">
         <article class="status-panel full-width" id="google-viewer-wrap" hidden>
           <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Google Link Preview</h2>
+            <h2 class="tracker-panel-title">Project Sheet Preview</h2>
           </div>
           <div class="sheet-preview-wrap">
             <iframe
@@ -80,64 +95,43 @@
           </div>
         </article>
 
-        <article class="status-panel">
+        <article class="status-panel full-width" id="timeline-viewer-wrap" hidden>
           <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Status Snapshot</h2>
-          </div>
-          <ul class="status-list" id="status-snapshot-list">
-            <li>No project data yet.</li>
-          </ul>
-        </article>
-
-        <article class="status-panel">
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Timeline</h2>
-          </div>
-          <ul class="status-list" id="timeline-list">
-            <li>No timeline entries yet.</li>
-          </ul>
-        </article>
-
-        <article class="status-panel full-width">
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Inserted Link History</h2>
-            <span class="layout-note">Latest links loaded into dashboard</span>
+            <h2 class="tracker-panel-title">Timeline Sheet Preview</h2>
           </div>
           <div class="sheet-preview-wrap">
-            <table class="issues-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Google Link</th>
-                  <th>Type</th>
-                  <th>Inserted</th>
-                </tr>
-              </thead>
-              <tbody id="link-history-body"></tbody>
-            </table>
+            <iframe
+              id="timeline-viewer"
+              title="Google timeline preview"
+              src="about:blank"
+              style="width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: #fff;"
+              loading="lazy">
+            </iframe>
           </div>
         </article>
 
         <article class="status-panel full-width" id="project-status-table" tabindex="-1">
           <div class="panel-title-row">
             <h2 class="tracker-panel-title">Project Status Table</h2>
-            <span class="layout-note">Scroll horizontally to see all columns</span>
+            <span class="layout-note">Copied directly from Project Status sheet</span>
           </div>
           <div class="sheet-preview-wrap">
             <table class="issues-table">
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Owner</th>
-                  <th>Phase</th>
-                  <th>Progress</th>
-                  <th>RAG</th>
-                  <th>Next Milestone</th>
-                  <th>Target Date</th>
-                  <th>Last Update</th>
-                </tr>
-              </thead>
+              <thead id="status-table-head"></thead>
               <tbody id="status-table-body"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="status-panel full-width">
+          <div class="panel-title-row">
+            <h2 class="tracker-panel-title">Project Timeline Table</h2>
+            <span class="layout-note">Copied directly from Timeline sheet</span>
+          </div>
+          <div class="sheet-preview-wrap">
+            <table class="issues-table">
+              <thead id="timeline-table-head"></thead>
+              <tbody id="timeline-table-body"></tbody>
             </table>
           </div>
         </article>
