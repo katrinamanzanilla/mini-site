@@ -688,10 +688,74 @@ body {
   align-items: start;
 }
 
+.tracker-shell.alt-layout {
+  max-width: 1200px;
+}
+
+.tracker-workspace.two-panel {
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 20px;
+}
+
 .tracker-panel {
   border: 1px solid #d9d5d1;
   background-color: #fdfcfb;
   padding: 20px;
+}
+
+.quick-add-panel {
+  position: sticky;
+  top: 18px;
+}
+
+.sheet-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.status-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.status-summary-box {
+  border: 1px solid #e3ded8;
+  background: #fff;
+  padding: 12px;
+}
+
+.status-summary-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  margin-bottom: 6px;
+}
+
+.status-summary-value {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.local-entries-inline {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.entries-table-wrap {
+  border: 1px solid #ece7e2;
+  max-height: 360px;
+  overflow: auto;
+  background: #fff;
+}
+
+.tracker-page .issues-table {
+  min-width: 0;
 }
 
 .tracker-panel-title {
@@ -846,6 +910,12 @@ body {
   opacity: 0.72;
 }
 
+.saved-count {
+  font-size: 11px;
+  opacity: 0.62;
+  font-weight: 500;
+}
+
 .entries-list {
   list-style: none;
   display: grid;
@@ -982,6 +1052,18 @@ body {
 
   .tracker-workspace {
     grid-template-columns: 1fr;
+  }
+
+  .tracker-workspace.two-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-add-panel {
+    position: static;
+  }
+
+  .status-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .form-grid {
@@ -1283,6 +1365,10 @@ body {
 
   .issues-table {
     min-width: 680px;
+  }
+
+  .status-summary-grid {
+    grid-template-columns: 1fr;
   }
 
   .timeline-embed-wrap iframe {
