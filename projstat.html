@@ -28,110 +28,55 @@
     <div class="status-shell">
       <section class="status-top">
         <h1 class="page-title">Project Status Overview</h1>
-        <p class="status-intro">Add your Google Sheets links below. The page will copy each sheet into tables, then summarize project counts per RAG type.</p>
+        <p class="status-intro">Paste a Google Sheets link, click View Data, and review the summary, filters, and complete table output.</p>
 
         <form id="sheet-source-form" class="status-source-form" autocomplete="off">
           <label for="sheet-source-input" class="status-source-label">Project Status Google Sheet</label>
           <div class="status-source-row">
-            <input id="sheet-source-input" class="status-source-input" type="text" placeholder="Paste project status sheet link" required>
-            <button type="submit" id="use-file-button" class="drive-button">VIEW PROJECT</button>
+            <input id="sheet-source-input" class="status-source-input" type="text" placeholder="Paste Google Sheets link" required>
+            <button type="submit" id="use-file-button" class="drive-button">View Data</button>
             <button type="button" id="sheet-source-reset" class="tracker-btn ghost">Reset</button>
           </div>
           <p id="sheet-source-feedback" class="copy-feedback" aria-live="polite"></p>
         </form>
-
-        <form id="timeline-source-form" class="status-source-form status-source-form-inline" autocomplete="off">
-          <label for="timeline-source-input" class="status-source-label">Project Timeline Google Sheet</label>
-          <div class="status-source-row">
-            <input id="timeline-source-input" class="status-source-input" type="text" placeholder="Paste timeline sheet link">
-            <button type="submit" id="use-timeline-button" class="drive-button">VIEW TIMELINE</button>
-            <button type="button" id="timeline-source-reset" class="tracker-btn ghost">Clear Timeline</button>
-          </div>
-          <p id="timeline-source-feedback" class="copy-feedback" aria-live="polite"></p>
-        </form>
       </section>
 
-      <section class="status-kpis" aria-label="Portfolio KPI overview">
+      <section class="status-kpis" aria-label="Summary scorecard">
         <article class="metric-card">
           <span class="metric-label">Total Projects</span>
-          <strong class="metric-value" id="kpi-total-projects">00</strong>
+          <strong class="metric-value" id="kpi-total-projects">0</strong>
         </article>
         <article class="metric-card">
-          <span class="metric-label">Active Projects</span>
-          <strong class="metric-value" id="kpi-active-projects">00</strong>
-        </article>
-        <article class="metric-card">
-          <span class="metric-label">On Track</span>
-          <strong class="metric-value" id="kpi-on-track">00</strong>
-        </article>
-        <article class="metric-card">
-          <span class="metric-label">At Risk</span>
-          <strong class="metric-value" id="kpi-at-risk">00</strong>
-        </article>
-        <article class="metric-card">
-          <span class="metric-label">Delayed</span>
-          <strong class="metric-value" id="kpi-delayed">00</strong>
+          <span class="metric-label">Total Milestones</span>
+          <strong class="metric-value" id="kpi-total-milestones">0</strong>
         </article>
       </section>
 
-      <div class="status-scroll-cue" id="status-scroll-cue" role="note" aria-live="polite">
-        <span class="status-scroll-copy">Project status table continues below.</span>
-        <a href="#project-status-table" class="status-scroll-link">Jump to table ↓</a>
-      </div>
+      <section class="status-panel full-width" aria-label="Filters and search">
+        <div class="panel-title-row">
+          <h2 class="tracker-panel-title">Filters &amp; Search</h2>
+        </div>
+        <div class="status-source-row">
+          <select id="system-filter" class="status-source-input" aria-label="Filter by System">
+            <option value="">All</option>
+          </select>
+          <select id="milestone-filter" class="status-source-input" aria-label="Filter by Milestone">
+            <option value="">All</option>
+          </select>
+          <input id="sheet-search" class="status-source-input" type="search" placeholder="Search system, developer, project manager, milestone" aria-label="Search data">
+        </div>
+      </section>
 
       <section class="status-grid" aria-label="Project status details">
-        <article class="status-panel full-width" id="google-viewer-wrap" hidden>
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Project Sheet Preview</h2>
-          </div>
-          <div class="sheet-preview-wrap">
-            <iframe
-              id="google-viewer"
-              title="Google project preview"
-              src="about:blank"
-              style="width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: #fff;"
-              loading="lazy">
-            </iframe>
-          </div>
-        </article>
-
-        <article class="status-panel full-width" id="timeline-viewer-wrap" hidden>
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Timeline Sheet Preview</h2>
-          </div>
-          <div class="sheet-preview-wrap">
-            <iframe
-              id="timeline-viewer"
-              title="Google timeline preview"
-              src="about:blank"
-              style="width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: #fff;"
-              loading="lazy">
-            </iframe>
-          </div>
-        </article>
-
         <article class="status-panel full-width" id="project-status-table" tabindex="-1">
           <div class="panel-title-row">
             <h2 class="tracker-panel-title">Project Status Table</h2>
-            <span class="layout-note">Copied directly from Project Status sheet</span>
+            <span class="layout-note">All rows and columns from the selected sheet</span>
           </div>
           <div class="sheet-preview-wrap">
             <table class="issues-table">
               <thead id="status-table-head"></thead>
               <tbody id="status-table-body"></tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="status-panel full-width">
-          <div class="panel-title-row">
-            <h2 class="tracker-panel-title">Project Timeline Table</h2>
-            <span class="layout-note">Copied directly from Timeline sheet</span>
-          </div>
-          <div class="sheet-preview-wrap">
-            <table class="issues-table">
-              <thead id="timeline-table-head"></thead>
-              <tbody id="timeline-table-body"></tbody>
             </table>
           </div>
         </article>
